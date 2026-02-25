@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>ACCESS ✦ STARBLOOM</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   CSS VARIABLES — COSMIC MINT (default)
+═══════════════════════════════════════════ */
+:root {
+  --bg:    #0d0f1e;
+  --mint:  #7fffd4;
+  --lmint: #b0fff0;
+  --lav:   #c8a8f8;
+  --llav:  #e8d8ff;
+  --dlav:  #8060c0;
+  --star:  #ffffc8;
+  --wht:   #f0f8ff;
+  --dim:   #506068;
+  --ldim:  #8898a8;
+  --dark:  #080b18;
+  --panel: #0e1228;
+  --heart: #f0a0c8;
+  --err:   #ff6a6a;
+  --f: 'Press Start 2P', monospace;
+}
+:root.theme-pink {
+  --bg:#1e0d18;--mint:#ff8ec8;--lmint:#ffb8e0;--lav:#f8a8d8;
+  --llav:#ffe0f0;--dlav:#c06080;--star:#fff0c8;--wht:#fff5fa;
+  --dim:#684858;--ldim:#a88898;--dark:#180810;--panel:#28101e;--heart:#ff6aaa;
+}
+:root.theme-lavender {
+  --bg:#120d1e;--mint:#c8a8f8;--lmint:#e0ccff;--lav:#a080e8;
+  --llav:#d8c8ff;--dlav:#6040b0;--star:#f8e8ff;--wht:#f5f0ff;
+  --dim:#584868;--ldim:#988aa8;--dark:#0c0818;--panel:#1a1028;--heart:#d898ff;
+}
+:root.theme-coral {
+  --bg:#1e100d;--mint:#ff9a78;--lmint:#ffbfa8;--lav:#f8c8a0;
+  --llav:#ffe8d8;--dlav:#c06040;--star:#fff8c0;--wht:#fff8f5;
+  --dim:#685048;--ldim:#a89088;--dark:#180a08;--panel:#281410;--heart:#ff7a5a;
+}
+:root.theme-aqua {
+  --bg:#0d1a1e;--mint:#60e8ff;--lmint:#a0f4ff;--lav:#80d8f0;
+  --llav:#c8f4ff;--dlav:#3090b0;--star:#ffffc8;--wht:#f0fbff;
+  --dim:#406068;--ldim:#78a8b8;--dark:#081418;--panel:#0e2028;--heart:#80d8ff;
+}
+
+/* ── RESET ── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;image-rendering:pixelated}
+html,body{width:100%;min-height:100vh;background:var(--bg);color:var(--wht);font-family:var(--f);cursor:default;overflow-x:hidden}
+
+/* CRT scanlines */
+body::before{content:'';position:fixed;inset:0;z-index:9500;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,.15) 3px,rgba(0,0,0,.15) 4px)}
+body.no-scan::before{display:none}
+
+/* ═══════════════════════════════════════════
+   KEYFRAMES
+═══════════════════════════════════════════ */
+@keyframes twinkle    {0%,44%,56%,100%{opacity:1}50%{opacity:0}}
+@keyframes twinkleBig {0%,30%,70%,100%{opacity:1}50%{opacity:.2}}
+@keyframes twinkleStar{0%,40%,60%,100%{opacity:.8;transform:scale(1)}50%{opacity:.1;transform:scale(.6)}}
+@keyframes hdriftUp   {0%{transform:translateY(0) rotate(-8deg);opacity:0}10%{opacity:.5}90%{opacity:.2}100%{transform:translateY(-110vh) rotate(8deg);opacity:0}}
+@keyframes blink      {0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes heartPulse {0%,49%{opacity:1}50%,100%{opacity:.4}}
+@keyframes ticker     {from{transform:translateX(0)}to{transform:translateX(-200%)}}
+@keyframes fadeInUp   {from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes titleShimmer{0%,70%,100%{color:var(--lmint)}75%{color:var(--star);text-shadow:0 0 10px var(--star)}85%{color:var(--llav)}}
+@keyframes cursorBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes shakeX     {0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(8px)}45%{transform:translateX(-6px)}60%{transform:translateX(6px)}75%{transform:translateX(-3px)}90%{transform:translateX(3px)}}
+@keyframes successPop {0%{transform:scale(1)}30%{transform:scale(1.04)}60%{transform:scale(.98)}100%{transform:scale(1)}}
+@keyframes keyPress   {0%{transform:scale(1) translateY(0)}50%{transform:scale(.9) translateY(3px)}100%{transform:scale(1) translateY(0)}}
+@keyframes glowPulse  {0%,100%{box-shadow:0 0 8px var(--mint)}50%{box-shadow:0 0 18px var(--mint),0 0 36px rgba(127,255,212,.3)}}
+@keyframes lockBounce {0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes panelIn    {from{transform:scaleY(.05) scaleX(.9);opacity:0}to{transform:scaleY(1) scaleX(1);opacity:1}}
+@keyframes dotPop     {0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+
+/* ═══════════════════════════════════════════
+   LAYER STACK
+═══════════════════════════════════════════ */
+#bg-layer{position:fixed;inset:0;z-index:0;background-color:var(--bg)}
+#starfield{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.pxstar{position:absolute;width:2px;height:2px;background:var(--wht);animation:twinkle var(--td,2s) steps(1) infinite;animation-delay:var(--dl,0s)}
+.pxstar.mint{background:var(--mint)}.pxstar.lav{background:var(--lav)}.pxstar.gold{background:var(--star);width:3px;height:3px}
+.pxstar.big{width:4px;height:4px;animation:twinkleBig var(--td,3s) steps(1) infinite;animation-delay:var(--dl,0s)}
+.csstar{position:absolute;font-size:var(--fs,10px);color:var(--col,#fff);animation:twinkleStar var(--td,2.5s) steps(1) infinite;animation-delay:var(--dl,0s);pointer-events:none;line-height:1}
+.hdrift{position:fixed;bottom:-30px;font-size:var(--fs,12px);color:var(--heart);animation:hdriftUp var(--hd,8s) linear forwards;opacity:0;z-index:2;pointer-events:none}
+
+/* pixel borders */
+#frame-outer{position:fixed;inset:6px;z-index:8;border:4px solid var(--mint);pointer-events:none}
+#frame-inner{position:fixed;inset:14px;z-index:8;border:2px solid var(--dlav);pointer-events:none}
+#frame-outer::before{content:'♥';position:absolute;top:-7px;left:50%;transform:translateX(-50%);font-family:var(--f);font-size:9px;color:var(--heart)}
+#frame-outer::after{content:'♥';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);font-family:var(--f);font-size:9px;color:var(--heart)}
+
+/* ═══════════════════════════════════════════
+   SCREEN
+═══════════════════════════════════════════ */
+#screen{
+  position:relative;z-index:3;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:0 16px 20px;
+  animation:fadeInUp .5s ease forwards;
+}
+
+/* ── HEADER ── */
+#header{width:100%;max-width:860px;padding:16px 20px 0;display:flex;justify-content:flex-end;align-items:center}
+#cfg-btn{background:rgba(8,11,24,.88);border:2px solid var(--mint);color:var(--mint);font-family:var(--f);font-size:7px;padding:6px 10px;cursor:pointer;letter-spacing:1px;z-index:10}
+#cfg-btn:hover{background:var(--mint);color:var(--dark)}
+#cfg-btn:active{transform:translateY(2px)}
+
+/* ── TICKER ── */
+#ticker-wrap{width:100%;max-width:860px;border-top:3px solid var(--mint);border-bottom:3px solid var(--mint);margin:10px 0 0;overflow:hidden;height:22px;display:flex;align-items:center;background:rgba(8,11,24,.78)}
+#ticker-wrap::before,#ticker-wrap::after{content:'♥';font-size:8px;color:var(--heart);flex-shrink:0;padding:0 6px}
+#ticker{white-space:nowrap;font-size:6px;color:var(--lav);letter-spacing:3px;animation:ticker 28s linear infinite;padding-left:100%;flex:1}
+
+/* ── TITLE ── */
+#title-section{text-align:center;margin:15px 0 6px;animation:fadeInUp .5s .1s ease both}
+#pw-title{font-size:clamp(14px,3.2vw,32px);letter-spacing:clamp(3px,.7vw,7px);display:block;margin-bottom:6px}
+#pw-title .c{display:inline-block;animation:titleShimmer 3s steps(1) infinite;animation-delay:var(--cd,0s);color:var(--lmint)}
+#pw-sub{font-size:clamp(6px,.9vw,8px);color:var(--lav);letter-spacing:2px;display:block;margin-top:4px;animation:blink 2.4s steps(1) infinite}
+.title-hearts{display:block;font-size:8px;letter-spacing:6px;color:var(--heart);margin-top:6px;animation:heartPulse 1.2s steps(1) infinite}
+
+/* sep */
+.sep{width:100%;max-width:640px;display:flex;align-items:center;gap:6px;margin:10px auto}
+.sep-line{flex:1;height:3px;background:var(--mint)}.sep-mid{color:var(--heart);font-size:8px;flex-shrink:0;letter-spacing:3px}
+
+/* ═══════════════════════════════════════════
+   PASSWORD BOX
+═══════════════════════════════════════════ */
+#pw-box{
+  width:100%;max-width:500px;
+  background:rgba(8,11,24,.9);
+  border:3px solid var(--mint);
+  outline:1px solid var(--dlav);
+  padding:18px 16px 14px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  position:relative;
+  animation:fadeInUp .5s .15s ease both;
+}
+#pw-box::before,#pw-box::after{content:'♥';position:absolute;font-family:var(--f);font-size:8px;color:var(--heart);background:rgba(8,11,24,.9);padding:0 3px}
+#pw-box::before{top:-7px;right:12px}
+#pw-box::after{bottom:-7px;left:12px}
+
+/* corner pixels */
+.pw-corner{position:absolute;width:6px;height:6px;background:var(--mint)}
+.pw-corner.tl{top:3px;left:3px}.pw-corner.tr{top:3px;right:3px}.pw-corner.bl{bottom:3px;left:3px}.pw-corner.br{bottom:3px;right:3px}
+
+/* ── LOCK ICON ── */
+#lock-icon{
+  font-size:28px;line-height:1;
+  filter:drop-shadow(0 0 6px var(--mint));
+  animation:lockBounce 2.4s ease-in-out infinite;
+  transition:filter .3s;
+}
+#lock-icon.unlocked{animation:none;filter:drop-shadow(0 0 12px var(--star)) drop-shadow(0 0 24px rgba(255,255,200,.4))}
+#lock-icon.error{animation:none;filter:drop-shadow(0 0 12px var(--err))}
+
+/* ── INPUT DISPLAY ── */
+#pw-prompt{font-size:6px;color:var(--ldim);letter-spacing:1px;text-align:center}
+
+#pw-display{
+  display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;
+  min-height:28px;
+}
+
+.pw-dot{
+  width:14px;height:14px;
+  background:var(--dim);
+  border:2px solid var(--ldim);
+  display:inline-block;
+  transition:background .12s,border-color .12s,transform .12s;
+}
+.pw-dot.filled{
+  background:var(--mint);border-color:var(--mint);
+  animation:dotPop .15s steps(2);
+}
+.pw-dot.error-dot{background:var(--err);border-color:var(--err)}
+
+/* typed chars display */
+#pw-chars{
+  font-size:clamp(8px,1.4vw,12px);
+  letter-spacing:3px;
+  color:var(--mint);
+  min-height:20px;
+  text-align:center;
+  word-break:break-all;
+  max-width:100%;
+  padding:0 8px;
+}
+
+/* ── STATUS MESSAGES ── */
+#pw-status{
+  font-size:6px;letter-spacing:1px;text-align:center;
+  min-height:16px;color:var(--ldim);
+  transition:color .2s;
+}
+#pw-status.err{color:var(--err);animation:shakeX .35s steps(1)}
+#pw-status.ok{color:var(--mint);animation:successPop .4s steps(2)}
+
+/* ── ATTEMPTS ── */
+#pw-attempts{font-size:5px;color:var(--ldim);letter-spacing:1px;text-align:center}
+#pw-attempts span{color:var(--heart)}
+
+/* ═══════════════════════════════════════════
+   ON-SCREEN KEYBOARD - FIXED FOR MOBILE
+═══════════════════════════════════════════ */
+#keyboard{
+  width:100%;max-width:560px;
+  display:flex;flex-direction:column;gap:5px;
+  align-items:center;
+  margin-top:10px;
+  animation:fadeInUp .5s .25s ease both;
+  padding:0 4px;
+}
+
+.kb-row{
+  display:flex;
+  gap:4px;
+  justify-content:center;
+  flex-wrap:wrap;
+  width:100%;
+}
+
+.key{
+  font-family:var(--f);
+  font-size:clamp(5px,1.5vw,7px);
+  letter-spacing:1px;
+  min-width:clamp(28px,8vw,38px);
+  height:clamp(28px,8vw,38px);
+  background:var(--dark);
+  border:2px solid var(--dim);
+  color:var(--ldim);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 2px;
+  position:relative;
+  transition:border-color .08s,color .08s,background .08s;
+  box-shadow:0 2px 0 var(--dim);
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+/* Touch-friendly sizing */
+@media (max-width:480px) {
+  .key {
+    min-width:32px;
+    height:36px;
+    font-size:6px;
+    box-shadow:0 3px 0 var(--dim);
+  }
+}
+
+.key:hover{border-color:var(--mint);color:var(--mint);background:rgba(127,255,212,.07);box-shadow:0 2px 0 var(--mint)}
+.key:active,.key.pressed{
+  transform:translateY(2px);
+  box-shadow:0 0 0 var(--mint);
+  background:var(--mint);color:var(--dark);border-color:var(--mint);
+}
+
+/* Special key sizes */
+.key.wide{min-width:clamp(48px,12vw,68px)}
+.key.wider{min-width:clamp(58px,14vw,78px)}
+.key.widest{min-width:clamp(80px,20vw,120px)}
+
+/* special keys */
+.key.key-backspace{border-color:var(--heart);color:var(--heart)}
+.key.key-backspace:hover{background:rgba(240,160,200,.12);box-shadow:0 2px 0 var(--heart)}
+.key.key-backspace:active{background:var(--heart);color:var(--dark);box-shadow:0 0 0}
+.key.key-enter{border-color:var(--star);color:var(--star)}
+.key.key-enter:hover{background:rgba(255,255,200,.1);box-shadow:0 2px 0 var(--star)}
+.key.key-enter:active{background:var(--star);color:var(--dark);box-shadow:0 0 0}
+.key.key-clear{border-color:var(--lav);color:var(--lav)}
+.key.key-clear:hover{background:rgba(200,168,248,.1);box-shadow:0 2px 0 var(--lav)}
+.key.key-clear:active{background:var(--lav);color:var(--dark);box-shadow:0 0 0}
+
+/* SPACE key specific */
+#key-space {
+  min-width:clamp(100px,30vw,180px);
+}
+
+/* caps indicator */
+#caps-indicator{
+  font-size:5px;letter-spacing:1px;color:var(--dim);
+  transition:color .15s;
+  text-align:right;
+  width:100%;
+  margin-top:4px;
+}
+#caps-indicator.on{color:var(--mint)}
+
+/* ── INSERT COIN ── */
+#insert{font-size:6px;color:var(--lmint);letter-spacing:2px;margin:10px 0 5px;animation:blink 1s steps(1) infinite}
+
+/* ── FOOTER ── */
+#footer{width:100%;max-width:860px;border-top:3px solid var(--mint);margin:12px 0 8px;padding:6px 12px;display:flex;justify-content:space-between;align-items:center}
+.ft{font-size:5px;color:var(--dim);letter-spacing:1px}
+.ft-heart{color:var(--heart)}
+
+/* ═══════════════════════════════════════════
+   SUCCESS SCREEN
+═══════════════════════════════════════════ */
+#success-screen{
+  position:fixed;inset:0;z-index:7000;
+  background:rgba(5,6,16,.97);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;text-align:center;padding:20px;
+  opacity:0;pointer-events:none;
+  transition:opacity .5s;
+}
+#success-screen.show{opacity:1;pointer-events:all}
+#success-icon{font-size:48px;filter:drop-shadow(0 0 16px var(--star));animation:lockBounce 1s ease-in-out infinite}
+#success-title{font-size:clamp(14px,3vw,24px);color:var(--star);letter-spacing:clamp(3px,.6vw,6px);animation:glowPulse 1.5s ease-in-out infinite}
+.success-hearts{font-size:9px;letter-spacing:6px;color:var(--heart);animation:heartPulse 1s steps(1) infinite}
+#success-sub{font-size:7px;color:var(--lav);letter-spacing:2px}
+#success-btn{
+  margin-top:10px;
+  background:var(--dark);border:3px solid var(--mint);color:var(--mint);
+  font-family:var(--f);font-size:7px;padding:10px 20px;cursor:pointer;letter-spacing:2px;
+  animation:glowPulse 2s ease-in-out infinite;
+}
+#success-btn:hover{background:var(--mint);color:var(--dark)}
+#success-btn:active{transform:translateY(2px)}
+
+/* ═══════════════════════════════════════════
+   SETTINGS OVERLAY - FIXED MOBILE
+═══════════════════════════════════════════ */
+.overlay{
+  position:fixed;inset:0;z-index:6000;
+  background:rgba(5,6,16,.96);
+  display:flex;align-items:center;justify-content:center;
+  padding:12px;
+  overflow-y:auto;
+}
+.overlay.hidden{display:none}
+
+.panel{
+  width:100%;max-width:420px;
+  background:var(--panel);
+  border:4px solid var(--mint);
+  outline:2px solid var(--dark);
+  max-height:90vh;
+  overflow-y:auto;
+  display:flex;flex-direction:column;
+  animation:panelIn .08s steps(1);
+  position:relative;
+  margin:auto;
+}
+
+.panel::before,.panel::after{content:'♥';position:absolute;font-family:var(--f);font-size:8px;color:var(--heart);background:var(--panel);padding:0 3px;z-index:1}
+.panel::before{top:-7px;right:12px}.panel::after{bottom:-7px;right:12px}
+
+.panel-hdr{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 14px;border-bottom:3px solid var(--mint);
+  background:rgba(8,11,24,.92);flex-shrink:0;
+}
+.panel-title{font-size:7px;color:var(--mint);letter-spacing:2px}
+.close-btn{background:var(--dark);border:2px solid var(--heart);color:var(--heart);font-family:var(--f);font-size:7px;padding:3px 6px;cursor:pointer}
+.close-btn:hover{background:var(--heart);color:var(--dark)}
+.close-btn:active{transform:translateY(2px)}
+
+.panel-body{overflow-y:auto;flex:1;padding:14px 12px}
+.panel-body::-webkit-scrollbar{width:4px}
+.panel-body::-webkit-scrollbar-thumb{background:var(--mint)}
+.panel-body::-webkit-scrollbar-track{background:var(--dark)}
+
+.p-sec{margin-bottom:16px}
+.p-sec-lbl{font-size:5px;color:var(--lav);letter-spacing:2px;display:block;margin-bottom:8px;border-bottom:2px solid var(--dim);padding-bottom:4px}
+.p-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:6px;flex-wrap:wrap}
+.p-lbl{color:var(--ldim);min-width:70px;flex-shrink:0}
+
+.tog{
+  background:var(--dark);border:2px solid var(--dim);
+  color:var(--dim);font-family:var(--f);font-size:6px;
+  padding:4px 10px;cursor:pointer;letter-spacing:1px;
+  min-width:50px;
+}
+.tog.on{border-color:var(--mint);color:var(--mint)}
+.tog:hover{border-color:var(--lav);color:var(--lav)}
+.tog:active{transform:translateY(2px)}
+
+.slid-wrap{display:flex;align-items:center;gap:6px;flex:1;min-width:150px}
+.slid-track{flex:1;height:10px;background:var(--dark);border:2px solid var(--dim);position:relative}
+.slid-fill{position:absolute;left:0;top:0;height:100%;background:var(--mint);opacity:.6;pointer-events:none;z-index:1}
+input[type=range]{-webkit-appearance:none;appearance:none;position:relative;z-index:2;width:100%;height:100%;background:transparent;cursor:pointer;margin:0;padding:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:14px;background:var(--lav);border:2px solid var(--llav);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:10px;height:14px;background:var(--lav);border:2px solid var(--llav);cursor:pointer;border-radius:0}
+.slid-val{font-size:5px;color:var(--mint);min-width:24px;text-align:right}
+
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.theme-card{background:var(--dark);border:2px solid var(--dim);cursor:pointer;padding:4px;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative}
+.theme-card:hover{border-color:var(--ldim)}.theme-card.on{border-color:var(--mint)}
+.theme-card.on::after{content:'✦';position:absolute;top:-6px;right:0;font-size:6px;color:var(--mint);background:var(--panel);padding:0 2px}
+.tc-preview{display:flex;gap:2px;justify-content:center}
+.tc-preview span{width:6px;height:6px;display:block;border:1px solid rgba(255,255,255,.12)}
+.tc-name{font-size:4px;color:var(--ldim);letter-spacing:1px}
+.theme-card.on .tc-name{color:var(--mint)}
+
+#close-cfg2{
+  background:var(--dark);border:2px solid var(--mint);color:var(--mint);
+  font-family:var(--f);font-size:7px;padding:8px 18px;cursor:pointer;letter-spacing:1px;
+  margin:0 auto;display:block;
+}
+#close-cfg2:hover{background:var(--mint);color:var(--dark)}
+#close-cfg2:active{transform:translateY(2px)}
+
+/* Extra small devices */
+@media (max-width:360px){
+  .key{min-width:28px;height:32px;font-size:5px}
+  #key-space{min-width:80px}
+  .pw-dot{width:12px;height:12px}
+  #pw-box{padding:12px 10px}
+  .panel{max-width:95%}
+  .theme-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- BG LAYER -->
+<div id="bg-layer"></div>
+<!-- STARFIELD -->
+<div id="starfield"></div>
+<!-- PIXEL BORDERS -->
+<div id="frame-outer"></div>
+<div id="frame-inner"></div>
+
+<!-- ════════════ MAIN SCREEN ════════════ -->
+<div id="screen">
+
+  <!-- HEADER -->
+  <div id="header">
+    <button id="cfg-btn">✦ CFG</button>
+  </div>
+
+  <!-- TICKER -->
+  <div id="ticker-wrap">
+    <span id="ticker">
+      ✦ SECURE ZONE ♥ ENTER PASSWORD ✦ ACCESS RESTRICTED ♥ REIII SECURITY ✦ IDENTIFY YOURSELF ♥ TYPE YOUR FAVORITE FOOD ✦ &nbsp;&nbsp;
+    </span>
+  </div>
+
+  <!-- TITLE -->
+  <div id="title-section">
+    <span id="pw-title">
+      <span class="c" style="--cd:0s">A</span><span class="c" style="--cd:.10s">C</span><span class="c" style="--cd:.20s">C</span><span class="c" style="--cd:.30s">E</span><span class="c" style="--cd:.40s">S</span><span class="c" style="--cd:.50s">S</span>
+      <span style="display:inline-block;width:clamp(6px,1.2vw,14px)">&nbsp;</span>
+      <span class="c" style="--cd:.62s">Z</span><span class="c" style="--cd:.74s">O</span><span class="c" style="--cd:.86s">N</span><span class="c" style="--cd:.98s">E</span>
+    </span>
+    <span id="pw-sub">✦ ENTER YOUR FAVORITEE FOOD ✦</span>
+    <span class="title-hearts">♥ &nbsp; ♥ &nbsp; ♥</span>
+  </div>
+
+  <!-- SEP -->
+  <div class="sep"><div class="sep-line"></div><span class="sep-mid">♥ ✦ ♥</span><div class="sep-line"></div></div>
+
+  <!-- PASSWORD BOX -->
+  <div id="pw-box">
+    <div class="pw-corner tl"></div><div class="pw-corner tr"></div>
+    <div class="pw-corner bl"></div><div class="pw-corner br"></div>
+
+    <div id="lock-icon">🔒</div>
+    <div id="pw-prompt">ENTER CODENAME</div>
+
+    <!-- dot display -->
+    <div id="pw-display"></div>
+
+    <!-- typed chars display (shows actual letters) -->
+    <div id="pw-chars"></div>
+
+    <div id="pw-status">♥ TYPE YOUR CODENAME ♥</div>
+    <div id="pw-attempts">ATTEMPTS LEFT: <span id="attempts-count">5</span></div>
+  </div>
+
+  <!-- KEYBOARD - FIXED LAYOUT -->
+  <div id="keyboard">
+
+    <!-- Row 1: numbers -->
+    <div class="kb-row">
+      <button class="key" data-char="1">1</button>
+      <button class="key" data-char="2">2</button>
+      <button class="key" data-char="3">3</button>
+      <button class="key" data-char="4">4</button>
+      <button class="key" data-char="5">5</button>
+      <button class="key" data-char="6">6</button>
+      <button class="key" data-char="7">7</button>
+      <button class="key" data-char="8">8</button>
+      <button class="key" data-char="9">9</button>
+      <button class="key" data-char="0">0</button>
+    </div>
+
+    <!-- Row 2: QWERTYUIOP -->
+    <div class="kb-row">
+      <button class="key" data-char="Q">Q</button>
+      <button class="key" data-char="W">W</button>
+      <button class="key" data-char="E">E</button>
+      <button class="key" data-char="R">R</button>
+      <button class="key" data-char="T">T</button>
+      <button class="key" data-char="Y">Y</button>
+      <button class="key" data-char="U">U</button>
+      <button class="key" data-char="I">I</button>
+      <button class="key" data-char="O">O</button>
+      <button class="key" data-char="P">P</button>
+    </div>
+
+    <!-- Row 3: ASDFGHJKL + DEL -->
+    <div class="kb-row">
+      <button class="key" data-char="A">A</button>
+      <button class="key" data-char="S">S</button>
+      <button class="key" data-char="D">D</button>
+      <button class="key" data-char="F">F</button>
+      <button class="key" data-char="G">G</button>
+      <button class="key" data-char="H">H</button>
+      <button class="key" data-char="J">J</button>
+      <button class="key" data-char="K">K</button>
+      <button class="key" data-char="L">L</button>
+      <button class="key key-backspace wide" id="key-back">⌫ DEL</button>
+    </div>
+
+    <!-- Row 4: ZXCVBNM + ENTER -->
+    <div class="kb-row">
+      <button class="key" data-char="Z">Z</button>
+      <button class="key" data-char="X">X</button>
+      <button class="key" data-char="C">C</button>
+      <button class="key" data-char="V">V</button>
+      <button class="key" data-char="B">B</button>
+      <button class="key" data-char="N">N</button>
+      <button class="key" data-char="M">M</button>
+      <button class="key key-enter wider" id="key-enter">ENTER ►</button>
+    </div>
+
+    <!-- Row 5: SPACE + CLEAR buttons -->
+    <div class="kb-row">
+      <button class="key key-clear wide" id="key-clear">✦ CLR</button>
+      <button class="key widest" data-char=" " id="key-space">SPACE</button>
+      <button class="key key-clear wide" id="key-clear2">CLR ✦</button>
+    </div>
+
+    <!-- caps indicator -->
+    <div id="caps-indicator">CAPS: OFF</div>
+  </div>
+
+  <div id="insert">♥ INSERT COIN ♥</div>
+
+  <!-- SOFT SEP -->
+  <div class="sep" style="margin-top:6px">
+    <div class="sep-line" style="background:var(--dlav);height:2px"></div>
+    <span class="sep-mid" style="color:var(--lav);font-size:6px">✦ ✦ ✦</span>
+    <div class="sep-line" style="background:var(--dlav);height:2px"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div id="footer">
+    <span class="ft">TYPE CODENAME <span class="ft-heart">♥</span> ENTER = CONFIRM</span>
+    <span class="ft">REIII PACAR AURELL</span>
+  </div>
+
+</div><!-- /screen -->
+
+<!-- ════════════ SUCCESS SCREEN ════════════ -->
+<div id="success-screen">
+  <span id="success-icon">🔓</span>
+  <span id="success-title">LIATTT INII BABYYYY</span>
+  <span class="success-hearts">♥ &nbsp; ♥ &nbsp; ♥</span>
+  <span id="success-sub">WELCOME, SAYANGGGGG ✦</span>
+  <button id="success-btn" onclick="goHome()">► ENTER HOMEE ♥</button>
+</div>
+
+<!-- ════════════ SETTINGS OVERLAY ════════════ -->
+
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════
+   PASSWORDS — case-insensitive, trimmed
+═══════════════════════════════════════════ */
+const VALID_PASSWORDS = new Set([
+  'chocolate', 'coklat', 'cadbury', 'matcha'
+]);
+
+/* ═══════════════════════════════════════════
+   LOAD/SAVE SETTINGS FROM LOCALSTORAGE
+═══════════════════════════════════════════ */
+function loadSettingsFromStorage() {
+  const savedTheme = localStorage.getItem('cosmic-mint-theme');
+  const savedSfx = localStorage.getItem('cosmic-mint-sfx');
+  const savedVol = localStorage.getItem('cosmic-mint-vol');
+  const savedScan = localStorage.getItem('cosmic-mint-scan');
+  const savedHearts = localStorage.getItem('cosmic-mint-hearts');
+  const savedStars = localStorage.getItem('cosmic-mint-stars');
+
+  // Theme
+  if (savedTheme) {
+    S.theme = savedTheme;
+    document.documentElement.classList.add(savedTheme);
+    $('bg-layer').style.backgroundColor = THEME_BG[savedTheme] || '#0d0f1e';
+  }
+
+  // Audio settings
+  if (savedSfx !== null) S.sfxOn = savedSfx === 'true';
+  if (savedVol !== null) S.vol = parseFloat(savedVol);
+
+  // Display settings
+  if (savedScan !== null) S.scan = savedScan === 'true';
+  if (savedHearts !== null) S.hearts = savedHearts === 'true';
+  if (savedStars !== null) S.stars = savedStars === 'true';
+
+  // Update UI toggles
+  updateToggles();
+}
+
+function saveSettingsToStorage() {
+  localStorage.setItem('cosmic-mint-theme', S.theme);
+  localStorage.setItem('cosmic-mint-sfx', S.sfxOn);
+  localStorage.setItem('cosmic-mint-vol', S.vol);
+  localStorage.setItem('cosmic-mint-scan', S.scan);
+  localStorage.setItem('cosmic-mint-hearts', S.hearts);
+  localStorage.setItem('cosmic-mint-stars', S.stars);
+}
+
+function updateToggles() {
+  const sfxBtn = $('sfx-tog');
+  const scanBtn = $('scan-tog');
+  const heartsBtn = $('hrt-tog');
+  const starsBtn = $('star-tog');
+  const volSlid = $('vol-slid');
+  const volVal = $('vol-val');
+  const slidFill = $('slid-fill');
+
+  if (sfxBtn) {
+    sfxBtn.textContent = S.sfxOn ? 'ON' : 'OFF';
+    sfxBtn.classList.toggle('on', S.sfxOn);
+  }
+  if (scanBtn) {
+    scanBtn.textContent = S.scan ? 'ON' : 'OFF';
+    scanBtn.classList.toggle('on', S.scan);
+    if (!S.scan) document.body.classList.add('no-scan');
+    else document.body.classList.remove('no-scan');
+  }
+  if (heartsBtn) {
+    heartsBtn.textContent = S.hearts ? 'ON' : 'OFF';
+    heartsBtn.classList.toggle('on', S.hearts);
+    if (S.hearts) startHearts(); else stopHearts();
+  }
+  if (starsBtn) {
+    starsBtn.textContent = S.stars ? 'ON' : 'OFF';
+    starsBtn.classList.toggle('on', S.stars);
+    if (S.stars) buildStars(); else $('starfield').innerHTML = '';
+  }
+  if (volSlid && volVal && slidFill) {
+    volSlid.value = S.vol * 100;
+    volVal.textContent = Math.round(S.vol * 100);
+    slidFill.style.width = (S.vol * 100) + '%';
+  }
+
+  // Update theme cards
+  document.querySelectorAll('.theme-card').forEach(c => {
+    c.classList.toggle('on', c.dataset.theme === S.theme);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   AUDIO
+═══════════════════════════════════════════ */
+let _actx = null;
+function getCtx() {
+  if (!_actx) _actx = new (window.AudioContext || window.webkitAudioContext)();
+  return _actx;
+}
+function playTone(freq, type, dur, vol) {
+  if (!S.sfxOn) return;
+  vol = vol || 0.18;
+  try {
+    const c = getCtx(), o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = type || 'square'; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol * S.vol, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+    o.start(); o.stop(c.currentTime + dur);
+  } catch(e) {}
+}
+function sfxKey()  { playTone(659, 'square', .06); }
+function sfxBack() { playTone(440, 'square', .06); }
+function sfxEnter(){ playTone(784,'square',.08); setTimeout(()=>playTone(988,'square',.08),50); }
+function sfxErr()  {
+  playTone(200,'square',.12,.25);
+  setTimeout(()=>playTone(180,'square',.12,.25),120);
+  setTimeout(()=>playTone(160,'square',.18,.25),240);
+}
+function sfxOk()   {
+  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'square',.15,.2),i*80));
+}
+function sfxHover(){ playTone(587,'square',.04,.08); }
+function sfxOpen() { playTone(523,'square',.08); setTimeout(()=>playTone(784,'square',.08),60); }
+function sfxClose(){ playTone(392,'square',.08); }
+function sfxTog()  { playTone(659,'square',.05); }
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+const S = {
+  sfxOn: true, vol: 0.4,
+  scan: true, hearts: true, stars: true,
+  theme: '',
+  input: '',
+  maxLen: 20,
+  attempts: 5,
+  locked: false,
+  audioStarted: false,
+};
+
+/* ═══════════════════════════════════════════
+   DOM REFS
+═══════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const lockIcon   = $('lock-icon');
+const pwDisplay  = $('pw-display');
+const pwChars    = $('pw-chars');
+const pwStatus   = $('pw-status');
+const attCount   = $('attempts-count');
+const capsInd    = $('caps-indicator');
+
+/* ═══════════════════════════════════════════
+   STARS
+═══════════════════════════════════════════ */
+function buildStars() {
+  const sf = $('starfield'); sf.innerHTML = '';
+  if (!S.stars) return;
+  const types = [{cls:'',n:60},{cls:'mint',n:25},{cls:'lav',n:25},{cls:'gold',n:15},{cls:'big',n:8}];
+  types.forEach(({cls,n}) => {
+    for (let i=0;i<n;i++) {
+      const d=document.createElement('div');
+      d.className='pxstar'+(cls?' '+cls:'');
+      d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;--td:${1+Math.random()*3.5}s;--dl:${Math.random()*4}s`;
+      sf.appendChild(d);
+    }
+  });
+  const syms=['✦','✦','★','✧','✦'],cols=['var(--star)','var(--mint)','var(--lav)','var(--lmint)','var(--llav)'];
+  for (let i=0;i<40;i++) {
+    const d=document.createElement('div');
+    d.className='csstar';d.textContent=syms[Math.floor(Math.random()*syms.length)];
+    d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;--fs:${8+Math.random()*10}px;--col:${cols[Math.floor(Math.random()*cols.length)]};--td:${1.5+Math.random()*4}s;--dl:${Math.random()*4}s`;
+    sf.appendChild(d);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   HEARTS
+═══════════════════════════════════════════ */
+let heartTimer;
+function spawnHeart() {
+  if (!S.hearts) return;
+  const h=document.createElement('div');h.className='hdrift';
+  h.textContent=['♥','♥','♥','✦','♥'][Math.floor(Math.random()*5)];
+  const dur=7+Math.random()*9;
+  h.style.cssText=`left:${4+Math.random()*92}%;--hd:${dur}s;--fs:${9+Math.random()*9}px`;
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),(dur+.5)*1000);
+}
+function startHearts(){
+  if (heartTimer) clearInterval(heartTimer);
+  heartTimer=setInterval(spawnHeart,1300);
+  spawnHeart();
+}
+function stopHearts(){
+  clearInterval(heartTimer);
+  document.querySelectorAll('.hdrift').forEach(h=>h.remove());
+}
+
+/* ═══════════════════════════════════════════
+   THEME
+═══════════════════════════════════════════ */
+const THEME_BG = {
+  '':'#0d0f1e','theme-pink':'#1e0d18','theme-lavender':'#120d1e',
+  'theme-coral':'#1e100d','theme-aqua':'#0d1a1e'
+};
+function applyTheme(key) {
+  Object.keys(THEME_BG).filter(k=>k).forEach(k=>document.documentElement.classList.remove(k));
+  if (key) document.documentElement.classList.add(key);
+  S.theme = key;
+  $('bg-layer').style.backgroundColor = THEME_BG[key] || '#0d0f1e';
+  if (S.stars) buildStars();
+  document.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('on',c.dataset.theme===key));
+  saveSettingsToStorage();
+  sfxTog();
+}
+
+/* ═══════════════════════════════════════════
+   PASSWORD INPUT LOGIC
+═══════════════════════════════════════════ */
+function renderDots() {
+  pwDisplay.innerHTML = '';
+  const len = Math.max(S.input.length, 8);
+  for (let i=0; i<len; i++) {
+    const d = document.createElement('span');
+    d.className = 'pw-dot' + (i < S.input.length ? ' filled' : '');
+    pwDisplay.appendChild(d);
+  }
+  pwChars.textContent = S.input || '';
+}
+
+function setStatus(msg, type) {
+  pwStatus.textContent = msg;
+  pwStatus.className = type ? type : '';
+  void pwStatus.offsetWidth;
+  if (type) { pwStatus.className = type; }
+}
+
+function typeChar(ch) {
+  if (S.locked) return;
+  if (S.input.length >= S.maxLen) return;
+  startAudio();
+  S.input += ch;
+  renderDots();
+  setStatus('');
+  sfxKey();
+}
+
+function deleteChar() {
+  if (S.locked) return;
+  if (!S.input.length) return;
+  S.input = S.input.slice(0,-1);
+  renderDots();
+  setStatus('');
+  sfxBack();
+}
+
+function clearInput() {
+  if (S.locked) return;
+  S.input = '';
+  renderDots();
+  setStatus('♥ CLEARED ♥');
+  sfxBack();
+}
+
+function submitPassword() {
+  if (S.locked) return;
+  startAudio();
+  sfxEnter();
+
+  const val = S.input.trim().toLowerCase();
+  if (!val) { setStatus('♥ TYPE SOMETHING ♥'); return; }
+
+  if (VALID_PASSWORDS.has(val)) {
+    S.locked = true;
+    lockIcon.textContent = '🔓';
+    lockIcon.classList.add('unlocked');
+    lockIcon.classList.remove('error');
+    setStatus('✦ ACCESS GRANTED ✦', 'ok');
+    sfxOk();
+    pwDisplay.querySelectorAll('.pw-dot').forEach(d => {
+      d.classList.add('filled');
+      d.style.background = 'var(--star)';
+      d.style.borderColor = 'var(--star)';
+    });
+    setTimeout(() => {
+      $('success-screen').classList.add('show');
+    }, 900);
+
+  } else {
+    S.attempts--;
+    attCount.textContent = S.attempts;
+    lockIcon.classList.add('error');
+    lockIcon.classList.remove('unlocked');
+    lockIcon.textContent = '🔒';
+    sfxErr();
+
+    pwDisplay.querySelectorAll('.pw-dot.filled').forEach(d => d.classList.add('error-dot'));
+    setTimeout(() => pwDisplay.querySelectorAll('.pw-dot').forEach(d => d.classList.remove('error-dot')), 600);
+
+    if (S.attempts <= 0) {
+      S.locked = true;
+      setStatus('✦ LOCKED OUT ✦', 'err');
+      setTimeout(() => {
+        setStatus('RELOAD TO TRY AGAIN', 'err');
+      }, 1000);
+    } else {
+      const taunts = [
+        '✦ WRONG CODENAME ✦',
+        '♥ TRY AGAIN ♥',
+        '✦ NOT QUITE... ✦',
+        '♥ HMMMM... ♥',
+        '✦ ACCESS DENIED ✦',
+      ];
+      setStatus(taunts[Math.floor(Math.random()*taunts.length)], 'err');
+      S.input = '';
+      setTimeout(() => { renderDots(); lockIcon.classList.remove('error'); }, 600);
+    }
+  }
+}
+
+function goHome() {
+  window.location.href = 'main.html';
+}
+
+/* ═══════════════════════════════════════════
+   ON-SCREEN KEYBOARD - FIXED
+═══════════════════════════════════════════ */
+function animKey(btn) {
+  btn.classList.add('pressed');
+  setTimeout(() => btn.classList.remove('pressed'), 120);
+}
+
+function initKeyboard() {
+  document.querySelectorAll('.key[data-char]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      animKey(btn);
+      typeChar(btn.dataset.char);
+    });
+    // Touch events for mobile
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      animKey(btn);
+      typeChar(btn.dataset.char);
+    }, {passive: false});
+  });
+
+  $('key-back').addEventListener('click', (e) => {
+    e.preventDefault();
+    animKey($('key-back'));
+    deleteChar();
+  });
+  $('key-back').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    animKey($('key-back'));
+    deleteChar();
+  }, {passive: false});
+
+  $('key-enter').addEventListener('click', (e) => {
+    e.preventDefault();
+    animKey($('key-enter'));
+    submitPassword();
+  });
+  $('key-enter').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    animKey($('key-enter'));
+    submitPassword();
+  }, {passive: false});
+
+  [$('key-clear'),$('key-clear2')].forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      animKey(btn);
+      clearInput();
+    });
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      animKey(btn);
+      clearInput();
+    }, {passive: false});
+  });
+}
+
+/* ═══════════════════════════════════════════
+   PHYSICAL KEYBOARD SUPPORT
+═══════════════════════════════════════════ */
+function initPhysKeyboard() {
+  document.addEventListener('keydown', e => {
+    if ($('cfg-overlay') && !$('cfg-overlay').classList.contains('hidden')) return;
+
+    const k = e.key;
+    if (k === 'Backspace') { e.preventDefault(); deleteChar(); }
+    else if (k === 'Enter') { e.preventDefault(); submitPassword(); }
+    else if (k === 'Escape') { e.preventDefault(); clearInput(); }
+    else if (k.length === 1) {
+      const ch = k.toUpperCase();
+      if (ch === ' ') typeChar(' ');
+      else if (/^[A-Z0-9]$/.test(ch)) typeChar(ch);
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════
+   AUDIO START
+═══════════════════════════════════════════ */
+function startAudio() {
+  if (S.audioStarted) return;
+  S.audioStarted = true;
+  try { getCtx().resume(); } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════════ */
+function openSettings()  { $('cfg-overlay').classList.remove('hidden'); sfxOpen(); }
+function closeSettings() { $('cfg-overlay').classList.add('hidden'); sfxClose(); }
+
+function makeTog(id, key, onFn, offFn) {
+  const btn=$(id); if(!btn)return;
+  btn.addEventListener('click',(e)=>{
+    e.preventDefault();
+    startAudio(); sfxTog();
+    S[key]=!S[key];
+    btn.textContent=S[key]?'ON':'OFF';
+    btn.classList.toggle('on',S[key]);
+    S[key] ? onFn&&onFn() : offFn&&offFn();
+    saveSettingsToStorage();
+  });
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  // Load settings first
+  loadSettingsFromStorage();
+
+  // Initialize
+  buildStars();
+  if (S.hearts) startHearts();
+  renderDots();
+  initKeyboard();
+  initPhysKeyboard();
+
+  // Event listeners
+  $('cfg-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    startAudio();
+    openSettings();
+  });
+
+  $('close-cfg').addEventListener('click', (e) => {
+    e.preventDefault();
+    closeSettings();
+  });
+
+  $('close-cfg2').addEventListener('click', (e) => {
+    e.preventDefault();
+    closeSettings();
+  });
+
+  $('cfg-overlay').addEventListener('click', e => {
+    if(e.target === $('cfg-overlay')) closeSettings();
+  });
+
+  // Theme cards
+  document.querySelectorAll('.theme-card').forEach(c => {
+    c.addEventListener('click', (e) => {
+      e.preventDefault();
+      applyTheme(c.dataset.theme);
+    });
+  });
+
+  // Toggles
+  makeTog('sfx-tog',  'sfxOn');
+  makeTog('scan-tog', 'scan',
+    ()=>document.body.classList.remove('no-scan'),
+    ()=>document.body.classList.add('no-scan')
+  );
+  makeTog('hrt-tog', 'hearts', startHearts, stopHearts);
+  makeTog('star-tog', 'stars', buildStars, ()=>$('starfield').innerHTML='');
+
+  // Volume slider
+  const volSlid=$('vol-slid'),volVal=$('vol-val'),slidFill=$('slid-fill');
+  volSlid.addEventListener('input',()=>{
+    S.vol=volSlid.value/100;
+    volVal.textContent=volSlid.value;
+    slidFill.style.width=volSlid.value+'%';
+    saveSettingsToStorage();
+  });
+
+  // ESC closes settings
+  document.addEventListener('keydown', e => {
+    if(e.key==='Escape' && $('cfg-overlay') && !$('cfg-overlay').classList.contains('hidden')) {
+      closeSettings();
+    }
+  });
+
+  // Start audio on first interaction
+  document.addEventListener('click', startAudio, {once: true});
+  document.addEventListener('touchstart', startAudio, {once: true});
+});
+
+// Make goHome available globally
+window.goHome = goHome;
+</script>
+</body>
+</html>

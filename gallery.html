@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>GALLERY ✦ COSMIC MEMORIES</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; image-rendering:pixelated; }
+
+/* ═══════════════════════════════════════════
+   CSS VARIABLES — COSMIC MINT THEME (default)
+═══════════════════════════════════════════ */
+:root {
+  --bg:    #0d0f1e;
+  --mint:  #7fffd4;
+  --lmint: #b0fff0;
+  --lav:   #c8a8f8;
+  --llav:  #e8d8ff;
+  --dlav:  #8060c0;
+  --star:  #ffffc8;
+  --wht:   #f0f8ff;
+  --dim:   #506068;
+  --ldim:  #8898a8;
+  --dark:  #080b18;
+  --panel: #0e1228;
+  --heart: #f0a0c8;
+  --f: 'Press Start 2P', monospace;
+}
+
+/* ── PINK THEME ── */
+:root.theme-pink {
+  --bg:#1e0d18; --mint:#ff8ec8; --lmint:#ffb8e0; --lav:#f8a8d8;
+  --llav:#ffe0f0; --dlav:#c06080; --star:#fff0c8; --wht:#fff5fa;
+  --dim:#684858; --ldim:#a88898; --dark:#180810; --panel:#28101e; --heart:#ff6aaa;
+}
+/* ── LAVENDER THEME ── */
+:root.theme-lavender {
+  --bg:#120d1e; --mint:#c8a8f8; --lmint:#e0ccff; --lav:#a080e8;
+  --llav:#d8c8ff; --dlav:#6040b0; --star:#f8e8ff; --wht:#f5f0ff;
+  --dim:#584868; --ldim:#988aa8; --dark:#0c0818; --panel:#1a1028; --heart:#d898ff;
+}
+/* ── CORAL THEME ── */
+:root.theme-coral {
+  --bg:#1e100d; --mint:#ff9a78; --lmint:#ffbfa8; --lav:#f8c8a0;
+  --llav:#ffe8d8; --dlav:#c06040; --star:#fff8c0; --wht:#fff8f5;
+  --dim:#685048; --ldim:#a89088; --dark:#180a08; --panel:#281410; --heart:#ff7a5a;
+}
+/* ── AQUA THEME ── */
+:root.theme-aqua {
+  --bg:#0d1a1e; --mint:#60e8ff; --lmint:#a0f4ff; --lav:#80d8f0;
+  --llav:#c8f4ff; --dlav:#3090b0; --star:#ffffc8; --wht:#f0fbff;
+  --dim:#406068; --ldim:#78a8b8; --dark:#081418; --panel:#0e2028; --heart:#80d8ff;
+}
+
+html, body {
+  width:100%; min-height:100vh;
+  background:var(--bg); color:var(--wht);
+  font-family:var(--f); cursor:default;
+  overflow-x:hidden;
+}
+
+/* CRT scanlines */
+body::before {
+  content:''; position:fixed; inset:0; z-index:9500;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,0.15) 3px,rgba(0,0,0,0.15) 4px);
+}
+body.no-scan::before { display:none; }
+
+/* ═══════════════════════════════════════════
+   KEYFRAMES
+═══════════════════════════════════════════ */
+@keyframes twinkle     { 0%,44%,56%,100%{opacity:1} 50%{opacity:0} }
+@keyframes twinkleBig  { 0%,30%,70%,100%{opacity:1} 50%{opacity:.2} }
+@keyframes twinkleStar { 0%,40%,60%,100%{opacity:.8;transform:scale(1)} 50%{opacity:.1;transform:scale(.6)} }
+@keyframes hdriftUp    { 0%{transform:translateY(0) rotate(-8deg);opacity:0} 10%{opacity:.5} 90%{opacity:.2} 100%{transform:translateY(-110vh) rotate(8deg);opacity:0} }
+@keyframes ticker      { from{transform:translateX(0)} to{transform:translateX(-200%)} }
+@keyframes blink       { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+@keyframes heartPulse  { 0%,49%{opacity:1} 50%,100%{opacity:.4} }
+@keyframes panelIn     { from{transform:scaleY(.05) scaleX(.9);opacity:0} to{transform:scaleY(1) scaleX(1);opacity:1} }
+@keyframes fadeInUp    { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes heartBeat   { 0%{transform:scale(1)} 30%{transform:scale(1.4)} 50%{transform:scale(1.2)} 70%{transform:scale(1.3)} 100%{transform:scale(1)} }
+
+/* ═══════════════════════════════════════════
+   LAYER STACK
+═══════════════════════════════════════════ */
+#bg-layer {
+  position:fixed; inset:0; z-index:0;
+  background-color:var(--bg);
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+  transition:background-color .4s;
+}
+
+#starfield {
+  position:fixed; inset:0; z-index:1;
+  pointer-events:none; overflow:hidden;
+}
+
+.pxstar {
+  position:absolute; width:2px; height:2px; background:var(--wht);
+  animation:twinkle var(--td,2s) steps(1) infinite; animation-delay:var(--dl,0s);
+}
+.pxstar.mint { background:var(--mint); }
+.pxstar.lav  { background:var(--lav); }
+.pxstar.gold { background:var(--star); width:3px; height:3px; }
+.pxstar.big  { width:4px; height:4px; animation:twinkleBig var(--td,3s) steps(1) infinite; animation-delay:var(--dl,0s); }
+.csstar {
+  position:absolute; font-size:var(--fs,10px); color:var(--col,#fff);
+  animation:twinkleStar var(--td,2.5s) steps(1) infinite; animation-delay:var(--dl,0s);
+  pointer-events:none; line-height:1;
+}
+
+.hdrift {
+  position:fixed; bottom:-30px;
+  font-size:var(--fs,12px); color:var(--heart);
+  animation:hdriftUp var(--hd,8s) linear forwards;
+  opacity:0; z-index:2; pointer-events:none;
+}
+
+/* pixel borders */
+#frame-outer {
+  position:fixed; inset:6px; z-index:8;
+  border:4px solid var(--mint); pointer-events:none;
+}
+#frame-inner {
+  position:fixed; inset:14px; z-index:8;
+  border:2px solid var(--dlav); pointer-events:none;
+}
+#frame-outer::before, #frame-outer::after {
+  content:'♥'; position:absolute; font-family:var(--f);
+  font-size:9px; color:var(--heart); padding:0 3px;
+}
+#frame-outer::before { top:-7px; left:50%; transform:translateX(-50%); }
+#frame-outer::after  { bottom:-7px; left:50%; transform:translateX(-50%); }
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+#header {
+  width:100%; max-width:1200px;
+  padding:16px 20px 0;
+  display:flex; justify-content:space-between; align-items:center;
+  position:relative; z-index:10; margin:0 auto;
+}
+#back-btn {
+  background:rgba(8,11,24,.88); border:2px solid var(--lav);
+  color:var(--lav); font-family:var(--f); font-size:7px;
+  padding:6px 10px; cursor:pointer; letter-spacing:1px;
+}
+#back-btn:hover { background:var(--lav); color:var(--dark); }
+
+#cfg-btn {
+  background:rgba(8,11,24,.88); border:2px solid var(--mint);
+  color:var(--mint); font-family:var(--f); font-size:7px;
+  padding:6px 10px; cursor:pointer; letter-spacing:1px;
+}
+#cfg-btn:hover { background:var(--mint); color:var(--dark); }
+
+/* ═══════════════════════════════════════════
+   TICKER
+═══════════════════════════════════════════ */
+#ticker-wrap {
+  width:100%; max-width:1200px;
+  border-top:3px solid var(--mint); border-bottom:3px solid var(--mint);
+  margin:10px auto 0; overflow:hidden; height:22px;
+  display:flex; align-items:center;
+  background:rgba(8,11,24,.78);
+}
+#ticker-wrap::before, #ticker-wrap::after {
+  content:'♥'; font-size:8px; color:var(--heart);
+  flex-shrink:0; padding:0 6px;
+}
+#ticker {
+  white-space:nowrap; font-size:5px; color:var(--lav);
+  letter-spacing:2px; animation:ticker 25s linear infinite;
+  padding-left:100%; flex:1;
+}
+
+/* ═══════════════════════════════════════════
+   HERO SECTION
+═══════════════════════════════════════════ */
+#hero {
+  width:100%; max-width:1200px;
+  margin:20px auto 0;
+  padding:0 20px;
+  position:relative; z-index:10;
+}
+
+#hero-banner {
+  background:rgba(8,11,24,.88);
+  border:4px solid var(--mint);
+  padding:30px 20px;
+  position:relative;
+  text-align:center;
+}
+
+.hero-corner {
+  position:absolute;
+  width:16px; height:16px;
+  border:3px solid var(--mint);
+}
+.hero-corner.tl { top:8px; left:8px; border-right:none; border-bottom:none; }
+.hero-corner.tr { top:8px; right:8px; border-left:none; border-bottom:none; }
+.hero-corner.bl { bottom:8px; left:8px; border-right:none; border-top:none; }
+.hero-corner.br { bottom:8px; right:8px; border-left:none; border-top:none; }
+
+#hero-title {
+  font-size:clamp(20px,4vw,36px);
+  color:var(--mint);
+  letter-spacing:4px;
+  margin-bottom:10px;
+  text-shadow:0 0 10px var(--mint);
+}
+
+#hero-sub {
+  font-size:clamp(6px,1.2vw,8px);
+  color:var(--lav);
+  letter-spacing:2px;
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.hero-sparkles {
+  display:flex;
+  gap:4px;
+}
+.hero-sparkles span {
+  font-size:8px;
+  color:var(--star);
+  animation:heartPulse 1s steps(1) infinite;
+}
+.hero-sparkles span:nth-child(2) { animation-delay:.3s; }
+.hero-sparkles span:nth-child(3) { animation-delay:.6s; }
+
+#hero-stats {
+  display:flex;
+  justify-content:center;
+  gap:24px;
+  font-size:6px;
+  color:var(--ldim);
+  flex-wrap:wrap;
+}
+#hero-stats span { color:var(--heart); font-size:8px; }
+
+/* ═══════════════════════════════════════════
+   FILTER BUTTONS
+═══════════════════════════════════════════ */
+#filter-section {
+  width:100%; max-width:1200px;
+  margin:20px auto 20px;
+  padding:0 20px;
+  z-index:10;
+}
+
+.filter-buttons {
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.filter-btn {
+  background:rgba(8,11,24,.88);
+  border:2px solid var(--dim);
+  color:var(--ldim);
+  font-family:var(--f);
+  font-size:clamp(5px,1.5vw,7px);
+  padding:8px 16px;
+  cursor:pointer;
+  letter-spacing:1px;
+  transition:all .1s;
+}
+.filter-btn:hover {
+  border-color:var(--mint);
+  color:var(--mint);
+  transform:translateY(-2px);
+}
+.filter-btn.active {
+  background:var(--mint);
+  color:var(--dark);
+  border-color:var(--mint);
+}
+.filter-btn:active { transform:translateY(2px); }
+
+/* ═══════════════════════════════════════════
+   GALLERY GRID - AUTO MASONRY
+═══════════════════════════════════════════ */
+#gallery-container {
+  width:100%; max-width:1200px;
+  margin:20px auto 40px;
+  padding:0 20px;
+  position:relative; z-index:10;
+}
+
+#gallery-grid {
+  display:grid;
+  grid-template-columns:repeat(4, 1fr);
+  gap:16px;
+  grid-auto-rows: minmax(100px, auto);
+  transition:opacity .3s ease;
+}
+
+/* Image cards - auto adjust to image size */
+.gallery-item {
+  position:relative;
+  background:var(--panel);
+  border:3px solid var(--dim);
+  cursor:pointer;
+  overflow:hidden;
+  transition:all .3s ease;
+  animation:fadeInUp .5s ease both;
+  animation-delay:var(--delay,0s);
+  grid-row: span var(--row-span, 1);
+}
+
+.gallery-item:hover {
+  transform:scale(1.02);
+  border-color:var(--mint);
+  box-shadow:0 0 20px var(--mint);
+  z-index:5;
+}
+
+.gallery-item img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .3s ease;
+}
+.gallery-item:hover img { transform:scale(1.1); }
+
+.gallery-item-overlay {
+  position:absolute;
+  bottom:0; left:0; right:0;
+  background:linear-gradient(to top, rgba(8,11,24,.95), transparent);
+  padding:12px 8px;
+  transform:translateY(100%);
+  transition:transform .3s ease;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.gallery-item:hover .gallery-item-overlay {
+  transform:translateY(0);
+}
+
+.gallery-item-title {
+  font-size:6px;
+  color:var(--mint);
+  letter-spacing:1px;
+}
+.gallery-item-category {
+  font-size:4px;
+  color:var(--lav);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.gallery-item-fav {
+  font-size:10px;
+  color:var(--dim);
+  cursor:pointer;
+  transition:all .2s;
+  padding:2px 6px;
+  z-index:20;
+}
+.gallery-item-fav:hover {
+  color:var(--heart);
+  transform:scale(1.2);
+}
+.gallery-item-fav.active {
+  color:var(--heart);
+  animation:heartBeat .3s ease;
+}
+
+/* ═══════════════════════════════════════════
+   LIGHTBOX MODAL
+═══════════════════════════════════════════ */
+#lightbox {
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  background:rgba(5,6,16,.98);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s ease;
+}
+#lightbox.show {
+  opacity:1;
+  pointer-events:all;
+}
+
+#lightbox-close {
+  position:absolute;
+  top:20px; right:20px;
+  background:var(--dark);
+  border:3px solid var(--heart);
+  color:var(--heart);
+  font-family:var(--f);
+  font-size:10px;
+  width:40px; height:40px;
+  cursor:pointer;
+  z-index:10001;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#lightbox-close:hover { background:var(--heart); color:var(--dark); }
+
+#lightbox-content {
+  max-width:90vw;
+  max-height:90vh;
+  position:relative;
+  border:4px solid var(--mint);
+}
+
+#lightbox-image {
+  max-width:100%;
+  max-height:80vh;
+  display:block;
+}
+
+#lightbox-info {
+  position:absolute;
+  bottom:-50px; left:0; right:0;
+  background:var(--panel);
+  border:3px solid var(--mint);
+  padding:10px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+#lightbox-title {
+  font-size:7px;
+  color:var(--mint);
+}
+#lightbox-desc {
+  font-size:5px;
+  color:var(--lav);
+}
+#lightbox-category {
+  font-size:5px;
+  color:var(--heart);
+  border:2px solid var(--heart);
+  padding:4px 8px;
+}
+
+#lightbox-nav {
+  position:absolute;
+  top:50%; left:0; right:0;
+  transform:translateY(-50%);
+  display:flex;
+  justify-content:space-between;
+  padding:0 20px;
+  pointer-events:none;
+}
+
+.lightbox-nav-btn {
+  background:var(--dark);
+  border:3px solid var(--mint);
+  color:var(--mint);
+  font-family:var(--f);
+  font-size:12px;
+  width:40px; height:40px;
+  cursor:pointer;
+  pointer-events:all;
+}
+.lightbox-nav-btn:hover { background:var(--mint); color:var(--dark); }
+.lightbox-nav-btn.disabled {
+  opacity:0.3;
+  pointer-events:none;
+}
+
+/* ═══════════════════════════════════════════
+   INSERT COIN & FOOTER
+═══════════════════════════════════════════ */
+#insert {
+  font-size:6px; color:var(--lmint); letter-spacing:2px;
+  margin:10px 0 5px; text-align:center;
+  animation:blink 1s steps(1) infinite;
+}
+
+#footer {
+  width:100%; max-width:1200px;
+  border-top:3px solid var(--mint);
+  margin:10px auto 20px;
+  padding:8px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.ft { font-size:5px; color:var(--dim); letter-spacing:1px; }
+.ft-heart { color:var(--heart); }
+
+/* ═══════════════════════════════════════════
+   SETTINGS OVERLAY
+═══════════════════════════════════════════ */
+.overlay {
+  position:fixed; inset:0; z-index:6000;
+  background:rgba(5,6,16,.96);
+  display:flex; align-items:center; justify-content:center;
+  padding:12px;
+}
+.overlay.hidden { display:none; }
+
+.panel {
+  width:100%; max-width:420px;
+  background:var(--panel); border:4px solid var(--mint);
+  outline:2px solid var(--dark);
+  max-height:90vh; overflow-y:auto;
+  display:flex; flex-direction:column;
+  animation:panelIn .08s steps(1);
+  position:relative;
+}
+.panel::before,.panel::after {
+  content:'♥'; position:absolute; font-size:8px;
+  color:var(--heart); background:var(--panel); padding:0 3px;
+}
+.panel::before{top:-7px;right:12px}.panel::after{bottom:-7px;right:12px}
+
+.panel-hdr {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 14px; border-bottom:3px solid var(--mint);
+  background:rgba(8,11,24,.92);
+}
+.panel-title{font-size:7px;color:var(--mint);letter-spacing:2px}
+.close-btn{
+  background:var(--dark);border:2px solid var(--heart);color:var(--heart);
+  font-family:var(--f);font-size:7px;padding:3px 6px;cursor:pointer
+}
+.close-btn:hover{background:var(--heart);color:var(--dark)}
+
+.panel-body{padding:14px 12px}
+.p-sec{margin-bottom:16px}
+.p-sec-lbl{font-size:5px;color:var(--lav);border-bottom:2px solid var(--dim);padding-bottom:4px;margin-bottom:8px;display:block}
+.p-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:6px;flex-wrap:wrap}
+.p-lbl{color:var(--ldim);min-width:70px}
+
+.tog{
+  background:var(--dark);border:2px solid var(--dim);color:var(--dim);
+  font-family:var(--f);font-size:6px;padding:4px 10px;cursor:pointer
+}
+.tog.on{border-color:var(--mint);color:var(--mint)}
+
+.slid-wrap{display:flex;align-items:center;gap:6px;flex:1}
+.slid-track{flex:1;height:10px;background:var(--dark);border:2px solid var(--dim);position:relative}
+.slid-fill{position:absolute;left:0;top:0;height:100%;background:var(--mint);opacity:.6}
+input[type=range]{width:100%;height:100%;background:transparent;cursor:pointer}
+.slid-val{font-size:5px;color:var(--mint);min-width:24px}
+
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+@media (max-width:480px){.theme-grid{grid-template-columns:repeat(3,1fr)}}
+
+.theme-card{
+  background:var(--dark);border:2px solid var(--dim);cursor:pointer;
+  padding:4px;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative
+}
+.theme-card.on{border-color:var(--mint)}
+.theme-card.on::after{content:'✦';position:absolute;top:-6px;right:0;font-size:6px;color:var(--mint);background:var(--panel);padding:0 2px}
+.tc-preview{display:flex;gap:2px}
+.tc-preview span{width:6px;height:6px;display:block}
+.tc-name{font-size:4px;color:var(--ldim)}
+.theme-card.on .tc-name{color:var(--mint)}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width:900px){
+  #gallery-grid { grid-template-columns:repeat(3, 1fr); }
+}
+
+@media (max-width:600px){
+  #gallery-grid { grid-template-columns:repeat(2, 1fr); gap:12px; }
+  #lightbox-info {
+    position:relative;
+    bottom:0;
+    margin-top:10px;
+  }
+}
+
+@media (max-width:400px){
+  #gallery-grid { gap:8px; }
+  .filter-btn { padding:6px 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- BG LAYER -->
+<div id="bg-layer"></div>
+
+<!-- STARFIELD -->
+<div id="starfield"></div>
+
+<!-- PIXEL BORDERS -->
+<div id="frame-outer"></div>
+<div id="frame-inner"></div>
+
+<!-- HEADER -->
+<div id="header">
+  <button id="back-btn">◄ BACK</button>
+  <button id="cfg-btn">✦ CFG</button>
+</div>
+
+<!-- TICKER -->
+<div id="ticker-wrap">
+  <span id="ticker">
+    ✦ BIRTHDAY AUYEL ♥ INSERT COIN ✦ PRESS START ♥ CEWE GW CANTIK BGT ✦
+      NIKAH YUK AUREL ♥ BIRTHDAYNYA CEWE REI ✦ INSERT COIN ♥ PRESS START ✦
+      © 2026 PUNYA NYA REI ♥ AUREL TUH PUNYA RAIHAN ✦
+      &nbsp;&nbsp;
+  </span>
+</div>
+
+<!-- HERO SECTION -->
+<div id="hero">
+  <div id="hero-banner">
+    <div class="hero-corner tl"></div><div class="hero-corner tr"></div>
+    <div class="hero-corner bl"></div><div class="hero-corner br"></div>
+    
+    <div id="hero-title">GALERIII ADEKKK</div>
+    <div id="hero-sub">
+      <span>✦ CAPTURED MOMENTS ✦</span>
+      <div class="hero-sparkles">
+        <span>✦</span><span>♥</span><span>✦</span>
+      </div>
+    </div>
+    <div id="hero-stats">
+      <div>TOTAL: <span id="total-count">0</span></div>
+      <div>FAVORITES: <span id="fav-count">0</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BUTTONS -->
+<div id="filter-section">
+  <div class="filter-buttons">
+    <button class="filter-btn active" data-filter="all">ALL</button>
+    <button class="filter-btn" data-filter="moments">MOMENTS</button>
+    <button class="filter-btn" data-filter="random">RANDOM</button>
+    <button class="filter-btn" data-filter="favorites">FAVORITES</button>
+  </div>
+</div>
+
+<!-- GALLERY GRID -->
+<div id="gallery-container">
+  <div id="gallery-grid"></div>
+</div>
+
+<!-- INSERT COIN -->
+<div id="insert">♥ INSERT COIN ♥</div>
+
+<!-- FOOTER -->
+<div id="footer">
+  <span class="ft">←→ NAVIGATE <span class="ft-heart">♥</span> CLICK ♥ TO FAVORITE</span>
+  <span class="ft">STARBLOOM CORP 1988</span>
+</div>
+
+<!-- LIGHTBOX MODAL -->
+<div id="lightbox">
+  <button id="lightbox-close">✕</button>
+  <div id="lightbox-nav">
+    <button class="lightbox-nav-btn" id="lightbox-prev">◄</button>
+    <button class="lightbox-nav-btn" id="lightbox-next">►</button>
+  </div>
+  <div id="lightbox-content">
+    <img id="lightbox-image" src="" alt="">
+    <div id="lightbox-info">
+      <div>
+        <div id="lightbox-title"></div>
+        <div id="lightbox-desc"></div>
+      </div>
+      <div id="lightbox-category"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS OVERLAY -->
+<div class="overlay hidden" id="cfg-overlay">
+  <div class="panel">
+    <div class="panel-hdr">
+      <span class="panel-title">♥ SETTINGS ✦</span>
+      <button class="close-btn" id="close-cfg">✕</button>
+    </div>
+    <div class="panel-body">
+
+      <div class="p-sec">
+        <span class="p-sec-lbl">✦ COLOR THEME ✦</span>
+        <div class="theme-grid" id="theme-grid">
+          <button class="theme-card on" data-theme=""><div class="tc-preview"><span style="background:#7fffd4"></span><span style="background:#c8a8f8"></span><span style="background:#f0a0c8"></span><span style="background:#ffffc8"></span></div><span class="tc-name">MINT</span></button>
+          <button class="theme-card" data-theme="theme-pink"><div class="tc-preview"><span style="background:#ff8ec8"></span><span style="background:#f8a8d8"></span><span style="background:#ff6aaa"></span><span style="background:#fff0c8"></span></div><span class="tc-name">PINKY</span></button>
+          <button class="theme-card" data-theme="theme-lavender"><div class="tc-preview"><span style="background:#c8a8f8"></span><span style="background:#a080e8"></span><span style="background:#d898ff"></span><span style="background:#f8e8ff"></span></div><span class="tc-name">LAVENDER</span></button>
+          <button class="theme-card" data-theme="theme-coral"><div class="tc-preview"><span style="background:#ff9a78"></span><span style="background:#f8c8a0"></span><span style="background:#ff7a5a"></span><span style="background:#fff8c0"></span></div><span class="tc-name">CORAL</span></button>
+          <button class="theme-card" data-theme="theme-aqua"><div class="tc-preview"><span style="background:#60e8ff"></span><span style="background:#80d8f0"></span><span style="background:#80d8ff"></span><span style="background:#ffffc8"></span></div><span class="tc-name">AQUA</span></button>
+        </div>
+      </div>
+
+      <div class="p-sec">
+        <span class="p-sec-lbl">✦ AUDIO ✦</span>
+        <div class="p-row"><span class="p-lbl">SFX</span><button class="tog on" id="sfx-tog">ON</button></div>
+        <div class="p-row"><span class="p-lbl">VOLUME</span>
+          <div class="slid-wrap">
+            <div class="slid-track"><div class="slid-fill" id="slid-fill" style="width:40%"></div><input type="range" id="vol-slid" min="0" max="100" value="40"/></div>
+            <span class="slid-val" id="vol-val">40</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-sec">
+        <span class="p-sec-lbl">♥ DISPLAY ♥</span>
+        <div class="p-row"><span class="p-lbl">SCANLINES</span><button class="tog on" id="scan-tog">ON</button></div>
+        <div class="p-row"><span class="p-lbl">HEARTS ♥</span><button class="tog on" id="hrt-tog">ON</button></div>
+        <div class="p-row"><span class="p-lbl">PIXEL STARS</span><button class="tog on" id="star-tog">ON</button></div>
+      </div>
+
+    </div>
+    <div style="border-top:3px solid var(--mint);padding:10px 14px;text-align:center;">
+      <button id="close-cfg2" style="background:var(--dark);border:2px solid var(--mint);color:var(--mint);font-family:var(--f);font-size:7px;padding:8px 20px;cursor:pointer;">► APPLY ♥ CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════
+   LOAD/SAVE SETTINGS FROM LOCALSTORAGE
+═══════════════════════════════════════════ */
+function loadSettingsFromStorage() {
+  const savedTheme = localStorage.getItem('cosmic-mint-theme');
+  const savedSfx = localStorage.getItem('cosmic-mint-sfx');
+  const savedVol = localStorage.getItem('cosmic-mint-vol');
+  const savedScan = localStorage.getItem('cosmic-mint-scan');
+  const savedHearts = localStorage.getItem('cosmic-mint-hearts');
+  const savedStars = localStorage.getItem('cosmic-mint-stars');
+
+  if (savedTheme) {
+    S.theme = savedTheme;
+    document.documentElement.classList.add(savedTheme);
+    $('bg-layer').style.backgroundColor = THEME_BG[savedTheme] || '#0d0f1e';
+  }
+  if (savedSfx !== null) S.sfxOn = savedSfx === 'true';
+  if (savedVol !== null) S.vol = parseFloat(savedVol);
+  if (savedScan !== null) S.scan = savedScan === 'true';
+  if (savedHearts !== null) S.hearts = savedHearts === 'true';
+  if (savedStars !== null) S.stars = savedStars === 'true';
+
+  updateToggles();
+}
+
+function saveSettingsToStorage() {
+  localStorage.setItem('cosmic-mint-theme', S.theme);
+  localStorage.setItem('cosmic-mint-sfx', S.sfxOn);
+  localStorage.setItem('cosmic-mint-vol', S.vol);
+  localStorage.setItem('cosmic-mint-scan', S.scan);
+  localStorage.setItem('cosmic-mint-hearts', S.hearts);
+  localStorage.setItem('cosmic-mint-stars', S.stars);
+}
+
+/* ═══════════════════════════════════════════
+   AUDIO ENGINE
+═══════════════════════════════════════════ */
+let _actx = null;
+function getCtx() {
+  if (!_actx) _actx = new (window.AudioContext || window.webkitAudioContext)();
+  return _actx;
+}
+function playTone(freq, type, dur, vol = 0.18) {
+  if (!S.sfxOn) return;
+  try {
+    const c = getCtx(), o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol * S.vol, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+    o.start(); o.stop(c.currentTime + dur);
+  } catch (e) {}
+}
+
+const SFX = {
+  hover: () => playTone(587, 'square', .05, .1),
+  click: () => { playTone(784, 'square', .07); setTimeout(() => playTone(988, 'square', .07), 50); },
+  open:  () => { playTone(523, 'square', .1);  setTimeout(() => playTone(784, 'square', .1),  70); },
+  close: () => playTone(392, 'square', .1),
+  tog:   () => playTone(659, 'square', .06),
+  fav:   () => playTone(880, 'square', .1),
+  secret: () => { 
+    [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'square',.15,.2),i*80));
+  }
+};
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+const S = {
+  sfxOn: true, vol: 0.4,
+  scan: true, hearts: true, stars: true,
+  theme: '',
+  audioStarted: false,
+  currentFilter: 'all',
+  currentImageIndex: 0,
+  favorites: new Set(),
+  secretClicks: 0,
+  secretUnlocked: false
+};
+
+/* ═══════════════════════════════════════════
+   THEME
+═══════════════════════════════════════════ */
+const THEME_BG = {
+  '':'#0d0f1e','theme-pink':'#1e0d18','theme-lavender':'#120d1e',
+  'theme-coral':'#1e100d','theme-aqua':'#0d1a1e'
+};
+
+function applyTheme(key) {
+  Object.keys(THEME_BG).filter(k=>k).forEach(k=>document.documentElement.classList.remove(k));
+  if (key) document.documentElement.classList.add(key);
+  S.theme = key;
+  $('bg-layer').style.backgroundColor = THEME_BG[key] || '#0d0f1e';
+  if (S.stars) buildStars();
+  document.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('on',c.dataset.theme===key));
+  saveSettingsToStorage();
+  SFX.tog();
+}
+
+/* ═══════════════════════════════════════════
+   STARFIELD
+═══════════════════════════════════════════ */
+function buildStars() {
+  const sf = $('starfield');
+  sf.innerHTML = '';
+  if (!S.stars) return;
+
+  for (let i = 0; i < 100; i++) {
+    const star = document.createElement('div');
+    star.className = 'pxstar';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 5 + 's';
+    star.style.animationDuration = (1 + Math.random() * 3) + 's';
+    sf.appendChild(star);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   DRIFTING HEARTS
+═══════════════════════════════════════════ */
+let heartTimer;
+function spawnHeart() {
+  if (!S.hearts) return;
+  const h = document.createElement('div');
+  h.className = 'hdrift';
+  h.textContent = ['♥','♥','♥','✦','♥'][Math.floor(Math.random()*5)];
+  const dur = 7 + Math.random() * 9;
+  h.style.cssText = `left:${4+Math.random()*92}%;--hd:${dur}s;--fs:${9+Math.random()*9}px`;
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), (dur + .5) * 1000);
+}
+
+function startHearts() {
+  if (heartTimer) clearInterval(heartTimer);
+  heartTimer = setInterval(spawnHeart, 1300);
+  spawnHeart();
+}
+
+function stopHearts() {
+  clearInterval(heartTimer);
+  document.querySelectorAll('.hdrift').forEach(h => h.remove());
+}
+
+/* ═══════════════════════════════════════════
+   DOM REFS
+═══════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const galleryGrid = $('gallery-grid');
+const lightbox = $('lightbox');
+const lightboxImg = $('lightbox-image');
+const lightboxTitle = $('lightbox-title');
+const lightboxDesc = $('lightbox-desc');
+const lightboxCat = $('lightbox-category');
+const totalCount = $('total-count');
+const favCount = $('fav-count');
+const secretToast = $('secret-toast');
+
+/* ═══════════════════════════════════════════
+   GALLERY DATA - GANTI FOTO DISINI
+═══════════════════════════════════════════ */
+const GALLERY_IMAGES = [
+  {
+    id: 1,
+    src: 'photo/first bangettt.jpg',  // Foto portrait (tinggi)
+    title: 'Our first chatt/meet',
+    category: 'Moments',
+    description: '✦BERSYUKUR BGT AK  ✦'
+  },
+  {
+    id: 2,
+    src: 'photo/first paapppp.jpg',  // Foto landscape (lebar)
+    title: 'CANTIK BANGET FIRST PAP KM KE AK',
+    category: 'Moments',
+    description: '✦ FIRST PAP NYA ADEKKK GEMOIII BANGETT ✦'
+  },
+  {
+    id: 3,
+    src: 'photo/tele lucuk 2.jpg',  // Foto square
+    title: 'lucuu kak hiyuknya, eh kakanya juga lucuk btw',
+    category: 'Random',
+    description: '✦ lucuu kak hiyuknya, eh kakanya juga lucuk btw ✦'
+  },
+  {
+    id: 4,
+    src: 'photo/EH CANTIK.jpg',  // Foto portrait panjang
+    title: 'TERANG BANGETT ITU FLASH ',
+    category: 'Random',
+    description: '✦ GEMUY, MW PEYUKKK DARI BELAKANGGG ✦'
+  },
+  {
+    id: 5,
+    src: 'photo/UKHTIII.jpg',  // Foto landscape lebar
+    title: 'GAKUAT UKHTI',
+    category: 'Random',
+    description: '✦ EH CANTIK BGT UKHTI NYA AK ✦'
+  },
+  {
+    id: 6,
+    src: 'photo/MOMMY 3.jpg',  // Foto square
+    title: 'OMG MOMMYY, NGILER BGT',
+    category: 'Random',
+    description: '✦ MOMMY MW NIKAH SM AK GK ✦'
+  },
+  {
+    id: 7,
+    src: 'photo/MOMMY 1.jpg',  // Foto portrait
+    title: 'NIKAHH YUUKKK MOMMYYYY',
+    category: 'Moments',
+    description: '✦ AUREL KAPAN FOTO FOTO KY GINI LAGI ✦'
+  },
+  {
+    id: 8,
+    src: 'photo/MOMMY 2.jpg',  // Foto landscape
+    title: 'ASTAGA MOMMY, NGILER NI GW',
+    category: 'Random',
+    description: '✦ BERENTI GA GODAIN AKU ✦'
+  },
+  {
+    id: 9,
+    src: 'photo/fineshyt 1.jpg',  // Foto square
+    title: 'KIW CANTIKKKK',
+    category: 'Random',
+    description: '✦ nikah yu sayang ✦'
+  },
+  {
+    id: 10,
+    src: 'photo/fineshyt 2.jpg',  // Foto portrait
+    title: 'CANTIKKK WOI',
+    category: 'Moments',
+    description: '✦ duh rugi bgt ga digodain cewe secantik ini ✦'
+  },
+  {
+    id: 11,
+    src: 'photo/imup 1.jpg',  // Foto landscape
+    title: 'EH SAYANGGG',
+    category: 'Moments',
+    description: '✦ ADEKKK CAYANGGGGGG ✦'
+  },
+  {
+    id: 12,
+    src: 'photo/imup 2.jpg',  // Foto square
+    title: 'MANISS BANGETTT SENYUMNYA',
+    category: 'Random',
+    description: '✦ yang bilang senyum lu tuh jelek siapa ya, secantik ini dibilang jelek ✦'
+  },
+  {
+    id: 13,
+    src: 'photo/imup 3.jpg',  // Foto portrait
+    title: 'centillll',
+    category: 'Moments',
+    description: '✦ ADEKKK CENTILL CANTIK BGTT ✦'
+  },
+  {
+    id: 14,
+    src: 'photo/agi sekola yh.jpg',  // Foto landscape
+    title: 'UKHTI CANTIP',
+    category: 'Random',
+    description: '✦ DEKKK??  ✦'
+  },
+  {
+    id: 15,
+    src: 'photo/agi sekolah yh 2.jpg',  // Foto square
+    title: 'EEHHHHH',
+    category: 'Random',
+    description: '✦ sekola yang bener yah adek, jangan ngegoda goda kaka gitu ✦'
+  },
+  {
+    id: 16,
+    src: 'photo/edisi ramadhan jir.jpg',  // Foto portrait
+    title: 'U-UKHTI????',
+    category: 'Moments',
+    description: '✦ subhanallah tobat dia ✦'
+  },
+  {
+    id: 17,
+    src: 'photo/cantik bgt ya allah 2.jpg',  // Foto landscape
+    title: 'CANTIKKKK',
+    category: 'Random',
+    description: '✦ WIFEYYYYY CINIII ✦'
+  },
+  {
+    id: 18,
+    src: 'photo/eh sayang 2.jpg',  // Foto square
+    title: 'gemuyynyoo pipii',
+    category: 'Moments',
+    description: '✦ ciniii pipii adekk kaka unyel unyell ✦'
+  },
+  {
+    id: 19,
+    src: 'photo/eh sayang.jpg',  // Foto portrait
+    title: 'eh sayang?',
+    category: 'Random',
+    description: '✦ GBISA NGETIK AP AP, CANTIK BGT ✦'
+  },
+  {
+    id: 20,
+    src: 'photo/eh sayang 1.jpg',  // Foto landscape
+    title: 'bibirnya anu',
+    category: 'Moments',
+    description: '✦ mw kokop kah ini ✦'
+  },
+  {
+    id: 21,
+    src: 'photo/cantik bgt ya allah.jpg',  // Foto square
+    title: 'ngapain yaaa cantik',
+    category: 'Random',
+    description: '✦ MATANA ITULHO , SO GORGEOUS ✦'
+  },
+  {
+    id: 22,
+    src: 'photo/geloo 1.jpg',  // Foto portrait
+    title: 'UDA GA SI',
+    category: 'Moments',
+    description: '✦ CCUKUP AK GABISA FOKUS NGODING ✦'
+  },
+  {
+    id: 23,
+    src: 'photo/geloo 2.jpg',  // Foto landscape
+    title: 'DA FUCK',
+    category: 'Random',
+    description: '✦ intinya da fuck ✦'
+  },
+  {
+    id: 24,
+    src: 'photo/geloo 3.jpg',  // Foto square
+    title: 'kak.....',
+    category: 'Random',
+    description: '✦ mukanya kenapa gitu ya?? minta dinikahin ini?? ✦'
+  },
+  {
+    id: 25,
+    src: 'photo/meleleh 1.jpg',  // Foto portrait
+    title: 'UISHHHHH',
+    category: 'Moments',
+    description: '✦ ini ak ngoding sambil senyum senyum lho ✦'
+  },
+  {
+    id: 26,
+    src: 'photo/meleleh 2.jpg',  // Foto landscape
+    title: 'ADUUHHHH',
+    category: 'Random',
+    description: '✦ ga berenti ngiler gua ini ✦'
+  },
+  {
+    id: 27,
+    src: 'photo/meleleh 3.jpg',  // Foto square
+    title: 'KOBISA SI???',
+    category: 'Moments',
+    description: '✦ SAYANGGGGG CANTIKKK BANGETT IHH ✦'
+  },
+  {
+    id: 28,
+    src: 'photo/bahaya iniiik.jpg',  // Foto portrait
+    title: 'BABYYY??',
+    category: 'Random',
+    description: '✦ gaperna sengiler ini liat cewe sendiri ✦'
+  },
+  {
+    id: 29,
+    src: 'photo/bahayaaa iniik 2.jpg',  // Foto landscape
+    title: 'SUMPA CANTIK BGT CEWE AK INI',
+    category: 'Moments',
+    description: '✦ sekali lagi gaperna sengiler ini liat cewe sendiri ✦'
+  },
+  {
+    id: 30,
+    src: 'photo/bahayaa iniik 3.jpg',  // Foto square
+    title: 'STOP',
+    category: 'Secret',
+    description: '✦ mau ga nikah sama aku??? ✦',
+    secret: true
+  },
+  {
+    id: 31,
+    src: 'photo/bahayaa iniik 4.jpg',  // Foto square
+    title: 'BIDADARI KH',
+    category: 'Secret',
+    description: '✦ wajar bidadari boyyyy ✦',
+    secret: true
+  },
+    {
+
+    id: 32,
+    src: 'photo/ukhti imuppp 2.jpg',  // Foto square
+    title: 'subhanallahh SIAPA INI BIDADARI KAH',
+    category: 'Secret',
+    description: '✦ intinya nikah ✦',
+    secret: true
+  },
+
+  {
+    id: 33,
+    src: 'photo/first.jpg',  // Foto square
+    title: 'KT BENERAN PACARAN KAN??',
+    category: 'Secret',
+    description: '✦ gataw harus mw ngomong apa, tapi AKU SAYANG DAN CINTA BGT SM KAMUU ✦',
+    secret: true
+  }
+];
+
+/* ═══════════════════════════════════════════
+   GET IMAGE DIMENSIONS
+═══════════════════════════════════════════ */
+function getImageDimensions(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = function() {
+      resolve({ width: this.width, height: this.height });
+    };
+    img.src = src;
+  });
+}
+
+/* ═══════════════════════════════════════════
+   RENDER GALLERY - AUTO ADJUST TO IMAGE SIZE
+═══════════════════════════════════════════ */
+async function renderGallery(filter = 'all') {
+  let filtered = [...GALLERY_IMAGES];
+  
+  if (filter === 'favorites') {
+    filtered = filtered.filter(img => S.favorites.has(img.id));
+  } else if (filter === 'moments') {
+    filtered = filtered.filter(img => img.category === 'Moments');
+  } else if (filter === 'random') {
+    filtered = [...filtered].sort(() => Math.random() - 0.5);
+  }
+  
+  // Always include secret if unlocked
+  if (S.secretUnlocked && filter !== 'favorites') {
+    const secretImg = GALLERY_IMAGES.find(img => img.secret);
+    if (secretImg && !filtered.some(img => img.id === secretImg.id)) {
+      filtered.push(secretImg);
+    }
+  }
+  
+  galleryGrid.innerHTML = '';
+  totalCount.textContent = filtered.length;
+  
+  for (let i = 0; i < filtered.length; i++) {
+    const img = filtered[i];
+    const dimensions = await getImageDimensions(img.src);
+    
+    // Calculate row span based on aspect ratio
+    const aspectRatio = dimensions.width / dimensions.height;
+    let rowSpan = 1;
+    
+    // Menentukan row span berdasarkan aspect ratio
+    if (aspectRatio < 0.7) { // Sangat portrait
+      rowSpan = 3;
+    } else if (aspectRatio < 0.9) { // Portrait
+      rowSpan = 2;
+    } else if (aspectRatio > 1.4) { // Sangat landscape
+      rowSpan = 1;
+    } else if (aspectRatio > 1.1) { // Landscape
+      rowSpan = 1;
+    } else { // Mendekati square
+      rowSpan = 2;
+    }
+    
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    item.style.setProperty('--row-span', rowSpan);
+    item.style.setProperty('--delay', `${i * 0.03}s`);
+    item.dataset.id = img.id;
+    
+    const isFav = S.favorites.has(img.id);
+    
+    item.innerHTML = `
+      <img src="${img.src}" alt="${img.title}" loading="lazy">
+      <div class="gallery-item-overlay">
+        <div class="gallery-item-title">${img.title}</div>
+        <div class="gallery-item-category">
+          <span>${img.category}</span>
+          <span class="gallery-item-fav ${isFav ? 'active' : ''}" data-id="${img.id}">♥</span>
+        </div>
+      </div>
+    `;
+    
+    // Favorite toggle
+    const favBtn = item.querySelector('.gallery-item-fav');
+    favBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFavorite(parseInt(favBtn.dataset.id));
+    });
+    
+    // Open lightbox
+    item.addEventListener('click', () => openLightbox(img.id));
+    
+    // Secret click counter
+    if (!S.secretUnlocked && !img.secret) {
+      item.addEventListener('click', () => {
+        S.secretClicks++;
+        if (S.secretClicks >= 5 && !S.secretUnlocked) {
+          unlockSecret();
+        }
+      });
+    }
+    
+    // Hover sound
+    item.addEventListener('mouseenter', () => SFX.hover());
+    
+    galleryGrid.appendChild(item);
+  }
+  
+  updateFavCount();
+}
+
+/* ═══════════════════════════════════════════
+   FAVORITE SYSTEM
+═══════════════════════════════════════════ */
+function toggleFavorite(id) {
+  if (S.favorites.has(id)) {
+    S.favorites.delete(id);
+  } else {
+    S.favorites.add(id);
+    SFX.fav();
+  }
+  renderGallery(S.currentFilter);
+  updateFavCount();
+}
+
+function updateFavCount() {
+  favCount.textContent = S.favorites.size;
+}
+
+/* ═══════════════════════════════════════════
+   SECRET UNLOCK
+═══════════════════════════════════════════ */
+function unlockSecret() {
+  S.secretUnlocked = true;
+  SFX.secret();
+  secretToast.classList.add('show');
+  setTimeout(() => secretToast.classList.remove('show'), 3000);
+  renderGallery(S.currentFilter);
+}
+
+/* ═══════════════════════════════════════════
+   LIGHTBOX
+═══════════════════════════════════════════ */
+function openLightbox(id) {
+  SFX.click();
+  const index = GALLERY_IMAGES.findIndex(img => img.id == id);
+  if (index === -1) return;
+  
+  S.currentImageIndex = index;
+  updateLightbox();
+  lightbox.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  SFX.close();
+  lightbox.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function updateLightbox() {
+  const img = GALLERY_IMAGES[S.currentImageIndex];
+  lightboxImg.src = img.src;
+  lightboxTitle.textContent = img.title;
+  lightboxDesc.textContent = img.description;
+  lightboxCat.textContent = img.category;
+  
+  $('lightbox-prev').classList.toggle('disabled', S.currentImageIndex === 0);
+  $('lightbox-next').classList.toggle('disabled', S.currentImageIndex === GALLERY_IMAGES.length - 1);
+}
+
+function prevImage() {
+  if (S.currentImageIndex > 0) {
+    SFX.click();
+    S.currentImageIndex--;
+    updateLightbox();
+  }
+}
+
+function nextImage() {
+  if (S.currentImageIndex < GALLERY_IMAGES.length - 1) {
+    SFX.click();
+    S.currentImageIndex++;
+    updateLightbox();
+  }
+}
+
+/* ═══════════════════════════════════════════
+   FILTER
+═══════════════════════════════════════════ */
+function setFilter(filter) {
+  SFX.click();
+  S.currentFilter = filter;
+  
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === filter);
+  });
+  
+  galleryGrid.style.opacity = '0.5';
+  setTimeout(() => {
+    renderGallery(filter);
+    galleryGrid.style.opacity = '1';
+  }, 200);
+}
+
+/* ═══════════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════════ */
+function openSettings()  { $('cfg-overlay').classList.remove('hidden'); SFX.open(); }
+function closeSettings() { $('cfg-overlay').classList.add('hidden'); SFX.close(); }
+
+function makeTog(btnId, key, onFn, offFn) {
+  const btn = $(btnId);
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    SFX.tog();
+    S[key] = !S[key];
+    btn.textContent = S[key] ? 'ON' : 'OFF';
+    btn.classList.toggle('on', S[key]);
+    S[key] ? onFn && onFn() : offFn && offFn();
+    saveSettingsToStorage();
+  });
+}
+
+function updateToggles() {
+  const sfxBtn = $('sfx-tog');
+  const scanBtn = $('scan-tog');
+  const heartsBtn = $('hrt-tog');
+  const starsBtn = $('star-tog');
+  const volSlid = $('vol-slid');
+  const volVal = $('vol-val');
+  const slidFill = $('slid-fill');
+
+  if (sfxBtn) {
+    sfxBtn.textContent = S.sfxOn ? 'ON' : 'OFF';
+    sfxBtn.classList.toggle('on', S.sfxOn);
+  }
+  if (scanBtn) {
+    scanBtn.textContent = S.scan ? 'ON' : 'OFF';
+    scanBtn.classList.toggle('on', S.scan);
+    document.body.classList.toggle('no-scan', !S.scan);
+  }
+  if (heartsBtn) {
+    heartsBtn.textContent = S.hearts ? 'ON' : 'OFF';
+    heartsBtn.classList.toggle('on', S.hearts);
+  }
+  if (starsBtn) {
+    starsBtn.textContent = S.stars ? 'ON' : 'OFF';
+    starsBtn.classList.toggle('on', S.stars);
+  }
+  if (volSlid && volVal && slidFill) {
+    volSlid.value = S.vol * 100;
+    volVal.textContent = Math.round(S.vol * 100);
+    slidFill.style.width = (S.vol * 100) + '%';
+  }
+  
+  document.querySelectorAll('.theme-card').forEach(c => {
+    c.classList.toggle('on', c.dataset.theme === S.theme);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   AUDIO START
+═══════════════════════════════════════════ */
+function startAudio() {
+  if (S.audioStarted) return;
+  S.audioStarted = true;
+  try { getCtx().resume(); } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  loadSettingsFromStorage();
+  
+  buildStars();
+  if (S.hearts) startHearts();
+  
+  renderGallery('all');
+  
+  // Event listeners
+  $('back-btn').addEventListener('click', () => {
+    SFX.click();
+    setTimeout(() => window.location.href = 'main.html', 120);
+  });
+  
+  $('cfg-btn').addEventListener('click', () => { startAudio(); openSettings(); });
+  $('close-cfg').addEventListener('click', closeSettings);
+  $('close-cfg2').addEventListener('click', closeSettings);
+  $('cfg-overlay').addEventListener('click', e => { if (e.target === $('cfg-overlay')) closeSettings(); });
+  
+  document.querySelectorAll('.theme-card').forEach(c => {
+    c.addEventListener('click', () => applyTheme(c.dataset.theme));
+  });
+  
+  makeTog('sfx-tog', 'sfxOn');
+  makeTog('scan-tog', 'scan',
+    () => document.body.classList.remove('no-scan'),
+    () => document.body.classList.add('no-scan')
+  );
+  makeTog('hrt-tog', 'hearts', startHearts, stopHearts);
+  makeTog('star-tog', 'stars', buildStars, () => $('starfield').innerHTML = '');
+  
+  const volSlid = $('vol-slid');
+  const volVal = $('vol-val');
+  const slidFill = $('slid-fill');
+  volSlid.addEventListener('input', () => {
+    S.vol = volSlid.value / 100;
+    volVal.textContent = volSlid.value;
+    slidFill.style.width = volSlid.value + '%';
+    saveSettingsToStorage();
+  });
+  
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+    btn.addEventListener('mouseenter', () => SFX.hover());
+  });
+  
+  // Lightbox controls
+  $('lightbox-close').addEventListener('click', closeLightbox);
+  $('lightbox-prev').addEventListener('click', prevImage);
+  $('lightbox-next').addEventListener('click', nextImage);
+  
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && lightbox.classList.contains('show')) {
+      closeLightbox();
+    }
+    if (e.key === 'ArrowLeft' && lightbox.classList.contains('show')) {
+      prevImage();
+    }
+    if (e.key === 'ArrowRight' && lightbox.classList.contains('show')) {
+      nextImage();
+    }
+    if (e.key === 'Escape' && !$('cfg-overlay').classList.contains('hidden')) {
+      closeSettings();
+    }
+  });
+  
+  // Touch swipe for mobile
+  let touchStartX = 0;
+  lightbox.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  });
+  
+  lightbox.addEventListener('touchend', e => {
+    if (!touchStartX) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchEndX - touchStartX;
+    
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) prevImage();
+      else nextImage();
+    }
+    touchStartX = 0;
+  });
+  
+  // Start audio on first interaction
+  document.addEventListener('click', startAudio, { once: true });
+  document.addEventListener('touchstart', startAudio, { once: true });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>PIXEL PLAYER • 10 LAGU</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Press Start 2P', cursive;
+            image-rendering: pixelated;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ═══════════════════════════════════════════
+           CSS VARIABLES — COSMIC MINT THEME (default)
+        ═══════════════════════════════════════════ */
+        :root {
+            --bg: #0d0f1e;
+            --primary: #7fffd4;
+            --secondary: #c8a8f8;
+            --accent: #f0a0c8;
+            --text: #f0f8ff;
+            --dark: #080b18;
+            --panel: #0e1228;
+            --dim: #506068;
+            --star: #ffffc8;
+            --f: 'Press Start 2P', monospace;
+        }
+
+        /* ── PINK THEME ── */
+        :root.theme-pink {
+            --bg: #1e0d18;
+            --primary: #ff8ec8;
+            --secondary: #f8a8d8;
+            --accent: #ff6aaa;
+            --text: #fff5fa;
+            --dim: #684858;
+            --dark: #180810;
+            --panel: #28101e;
+        }
+
+        /* ── LAVENDER THEME ── */
+        :root.theme-lavender {
+            --bg: #120d1e;
+            --primary: #c8a8f8;
+            --secondary: #a080e8;
+            --accent: #d898ff;
+            --text: #f5f0ff;
+            --dim: #584868;
+            --dark: #0c0818;
+            --panel: #1a1028;
+        }
+
+        /* ── CORAL THEME ── */
+        :root.theme-coral {
+            --bg: #1e100d;
+            --primary: #ff9a78;
+            --secondary: #f8c8a0;
+            --accent: #ff7a5a;
+            --text: #fff8f5;
+            --dim: #685048;
+            --dark: #180a08;
+            --panel: #281410;
+        }
+
+        /* ── AQUA THEME ── */
+        :root.theme-aqua {
+            --bg: #0d1a1e;
+            --primary: #60e8ff;
+            --secondary: #80d8f0;
+            --accent: #80d8ff;
+            --text: #f0fbff;
+            --dim: #406068;
+            --dark: #081418;
+            --panel: #0e2028;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 180px;
+        }
+
+        /* CRT scanlines */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 9500;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.15) 3px, rgba(0,0,0,0.15) 4px);
+        }
+        body.no-scan::before { display: none; }
+
+        /* Floating hearts */
+        .hdrift {
+            position: fixed;
+            bottom: -30px;
+            font-size: var(--fs, 12px);
+            color: var(--accent);
+            animation: hdriftUp var(--hd, 8s) linear forwards;
+            opacity: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        @keyframes hdriftUp {
+            0% { transform: translateY(0) rotate(-8deg); opacity: 0; }
+            10% { opacity: .5; }
+            90% { opacity: .2; }
+            100% { transform: translateY(-110vh) rotate(8deg); opacity: 0; }
+        }
+
+        /* Pixel stars */
+        #starfield {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .pxstar {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--text);
+            animation: twinkle var(--td,2s) steps(1) infinite;
+            animation-delay: var(--dl,0s);
+        }
+
+        .pxstar.primary { background: var(--primary); }
+        .pxstar.secondary { background: var(--secondary); }
+        .pxstar.accent { background: var(--accent); }
+
+        @keyframes twinkle {
+            0%,44%,56%,100%{opacity:1}
+            50%{opacity:0}
+        }
+
+        /* Pixel borders */
+        #frame-outer {
+            position: fixed;
+            inset: 6px;
+            z-index: 8;
+            border: 4px solid var(--primary);
+            pointer-events: none;
+        }
+
+        #frame-inner {
+            position: fixed;
+            inset: 14px;
+            z-index: 8;
+            border: 2px solid var(--secondary);
+            pointer-events: none;
+        }
+
+        #frame-outer::before,
+        #frame-outer::after {
+            content: '♥';
+            position: absolute;
+            font-family: var(--f);
+            font-size: 9px;
+            color: var(--accent);
+            padding: 0 3px;
+        }
+        #frame-outer::before { top: -7px; left: 50%; transform: translateX(-50%); }
+        #frame-outer::after { bottom: -7px; left: 50%; transform: translateX(-50%); }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 3px solid var(--primary);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header button {
+            background: var(--dark);
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+            font-size: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all .1s;
+        }
+
+        .header button:hover {
+            background: var(--secondary);
+            color: var(--dark);
+        }
+
+        .header button:active {
+            transform: translateY(2px);
+        }
+
+        /* Ticker */
+        .ticker-wrap {
+            width: 100%;
+            background: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            overflow: hidden;
+            padding: 8px 0;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .ticker {
+            white-space: nowrap;
+            animation: ticker 20s linear infinite;
+            font-size: 7px;
+            color: var(--primary);
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Playlist Header */
+        .playlist-header {
+            background: var(--panel);
+            border: 3px solid var(--primary);
+            margin: 0 10px 15px 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .playlist-cover {
+            width: 150px;
+            height: 150px;
+            border: 4px solid var(--secondary);
+        }
+
+        .playlist-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .playlist-info {
+            text-align: center;
+        }
+
+        .playlist-info h1 {
+            color: var(--primary);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .playlist-info p {
+            color: var(--secondary);
+            font-size: 7px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            font-size: 7px;
+            color: var(--dim);
+            margin: 10px 0;
+        }
+
+        .stats span {
+            color: var(--accent);
+        }
+
+        .play-all {
+            background: var(--dark);
+            border: 3px solid var(--primary);
+            color: var(--primary);
+            font-size: 8px;
+            padding: 12px 25px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .play-all:active {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        /* Song List */
+        .song-list {
+            background: var(--panel);
+            border: 3px solid var(--dim);
+            margin: 0 10px 20px 10px;
+            padding: 8px;
+            max-height: 350px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .song-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 2px solid transparent;
+            margin-bottom: 5px;
+            background: rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all .1s;
+        }
+
+        .song-item:hover {
+            border-color: var(--secondary);
+        }
+
+        .song-item:active {
+            transform: scale(0.98);
+        }
+
+        .song-item.active {
+            border-color: var(--primary);
+            background: rgba(127,255,212,0.1);
+        }
+
+        .song-cover {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--dim);
+            flex-shrink: 0;
+        }
+
+        .song-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .song-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .song-title {
+            font-size: 7px;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .song-artist {
+            font-size: 5px;
+            color: var(--dim);
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .song-duration {
+            font-size: 6px;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        /* Player */
+        .player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--panel);
+            border-top: 4px solid var(--primary);
+            padding: 12px;
+            z-index: 100;
+        }
+
+        .player-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .player-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .player-cover {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--secondary);
+            flex-shrink: 0;
+        }
+
+        .player-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .player-song {
+            font-size: 8px;
+            color: var(--primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-artist {
+            font-size: 6px;
+            color: var(--secondary);
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Equalizer - Soundbar */
+        .equalizer {
+            display: flex;
+            gap: 3px;
+            height: 20px;
+            align-items: flex-end;
+            margin-left: 5px;
+        }
+
+        .eq-bar {
+            width: 4px;
+            background: var(--primary);
+            animation: equalizer 1s ease-in-out infinite;
+        }
+
+        .eq-bar:nth-child(2) {
+            animation-delay: 0.2s;
+            background: var(--secondary);
+        }
+        .eq-bar:nth-child(3) {
+            animation-delay: 0.4s;
+            background: var(--accent);
+        }
+        .eq-bar:nth-child(4) {
+            animation-delay: 0.6s;
+            background: var(--primary);
+        }
+        .eq-bar:nth-child(5) {
+            animation-delay: 0.8s;
+            background: var(--secondary);
+        }
+
+        .eq-bar.paused {
+            animation-play-state: paused;
+            opacity: 0.3;
+        }
+
+        @keyframes equalizer {
+            0%, 100% { height: 4px; }
+            20% { height: 16px; }
+            40% { height: 8px; }
+            60% { height: 20px; }
+            80% { height: 12px; }
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .controls button {
+            background: var(--dark);
+            border: 2px solid var(--dim);
+            color: var(--dim);
+            font-size: 8px;
+            padding: 8px 12px;
+            min-width: 40px;
+            cursor: pointer;
+            transition: all .1s;
+        }
+
+        .controls button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .controls button:active {
+            transform: translateY(2px);
+        }
+
+        .controls .play-btn {
+            background: var(--primary);
+            color: var(--dark);
+            border-color: var(--primary);
+        }
+
+        .progress {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .progress-time {
+            font-size: 6px;
+            color: var(--secondary);
+            min-width: 70px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 12px;
+            background: var(--dark);
+            border: 2px solid var(--dim);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0%;
+            background: var(--primary);
+            pointer-events: none;
+        }
+
+        .volume {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .volume span {
+            font-size: 6px;
+            min-width: 25px;
+        }
+
+        .volume-bar {
+            flex: 1;
+            height: 10px;
+            background: var(--dark);
+            border: 2px solid var(--dim);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .volume-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 40%;
+            background: var(--accent);
+            pointer-events: none;
+        }
+
+        /* Lyrics Panel - dengan tombol back */
+        .lyrics-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            background: var(--panel);
+            border-left: 4px solid var(--primary);
+            z-index: 2000;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lyrics-panel.show {
+            right: 0;
+        }
+
+        .lyrics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 3px solid var(--primary);
+            background: var(--dark);
+        }
+
+        .lyrics-header h3 {
+            color: var(--primary);
+            font-size: 8px;
+        }
+
+        .lyrics-close {
+            background: var(--dark);
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            font-size: 8px;
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+
+        .lyrics-close:hover {
+            background: var(--accent);
+            color: var(--dark);
+        }
+
+        .lyrics-close:active {
+            transform: translateY(2px);
+        }
+
+        .lyrics-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 15px;
+            font-size: 8px;
+            line-height: 2;
+            color: var(--secondary);
+            text-align: center;
+        }
+
+        .lyric-line {
+            padding: 10px;
+            border-bottom: 1px solid var(--dim);
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+
+        .lyric-line.active {
+            opacity: 1;
+            color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        /* Equalizer di lyrics panel */
+        .lyrics-equalizer {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            align-items: flex-end;
+            height: 30px;
+            margin-top: 10px;
+            padding: 10px 0;
+            border-top: 2px solid var(--dim);
+        }
+
+        .lyrics-eq-bar {
+            width: 5px;
+            background: var(--primary);
+            animation: equalizer 1s ease-in-out infinite;
+        }
+
+        .lyrics-eq-bar:nth-child(2) { animation-delay: 0.2s; background: var(--secondary); }
+        .lyrics-eq-bar:nth-child(3) { animation-delay: 0.4s; background: var(--accent); }
+        .lyrics-eq-bar:nth-child(4) { animation-delay: 0.6s; background: var(--primary); }
+        .lyrics-eq-bar:nth-child(5) { animation-delay: 0.8s; background: var(--secondary); }
+        .lyrics-eq-bar:nth-child(6) { animation-delay: 1.0s; background: var(--accent); }
+
+        /* Loading */
+        .loading {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 3000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .loading.show {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+
+        .spinner {
+            display: flex;
+            gap: 5px;
+        }
+
+        .spinner span {
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            animation: bounce 0.6s infinite;
+        }
+
+        .spinner span:nth-child(2) { animation-delay: 0.2s; background: var(--secondary); }
+        .spinner span:nth-child(3) { animation-delay: 0.4s; background: var(--accent); }
+
+        @keyframes bounce {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1); }
+        }
+
+        /* Settings */
+        .settings {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 4000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .settings.hidden {
+            display: none;
+        }
+
+        .settings-panel {
+            background: var(--panel);
+            border: 4px solid var(--primary);
+            width: 100%;
+            max-width: 350px;
+            padding: 20px;
+        }
+
+        .settings-panel h3 {
+            color: var(--primary);
+            font-size: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 7px;
+        }
+
+        .setting-item button {
+            background: var(--dark);
+            border: 2px solid var(--dim);
+            color: var(--dim);
+            padding: 5px 15px;
+            font-size: 7px;
+            cursor: pointer;
+        }
+
+        .setting-item button.on {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .close-settings {
+            background: var(--dark);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px;
+            width: 100%;
+            font-size: 8px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .close-settings:hover {
+            background: var(--primary);
+            color: var(--dark);
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            body { padding-bottom: 160px; }
+            .playlist-header { flex-direction: row; text-align: left; }
+            .playlist-info { text-align: left; }
+            .stats { justify-content: flex-start; }
+            .play-all { margin: 0; }
+            .player-container { max-width: 900px; margin: 0 auto; }
+        }
+
+        @media (max-width: 480px) {
+            .lyrics-panel { max-width: 100%; }
+            .lyrics-header h3 { font-size: 7px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Pixel Stars Container -->
+    <div id="starfield"></div>
+
+    <!-- Pixel Borders -->
+    <div id="frame-outer"></div>
+    <div id="frame-inner"></div>
+
+    <!-- Header -->
+    <div class="header">
+        <button id="backBtn">◄ BACK</button>
+        <button id="settingsBtn">⚙️ SET</button>
+    </div>
+
+    <!-- Ticker -->
+    <div class="ticker-wrap">
+        <div class="ticker" id="ticker">
+            ♪ ALEXANDRA - REALITY CLUB ♪ BEST PART - DANIEL CAESAR ♪ THERE IS A LIGHT - THE SMITHS ♪ AM I BOTHERING YOU - REALITY CLUB ♪ INDAHNYA DIRIMU - HIVI! ♪
+        </div>
+    </div>
+
+    <!-- Playlist Header -->
+    <div class="playlist-header">
+        <div class="playlist-cover">
+            <img src="photo/bahayaaa iniik 2.jpg">
+        </div>
+        <div class="playlist-info">
+            <h1>FOR MY BABYYYYY🩷🩷💗💞</h1>
+            <p>✦ REALITY CLUB • DANIEL CAESAR • HIVI! • THE SMITHS • BEABADOOBEE ✦</p>
+            <div class="stats">
+                <div>TRACKS: <span id="totalSongs">10</span></div>
+                <div>TOTAL: <span id="totalDuration">38:45</span></div>
+            </div>
+            <button class="play-all" id="playAllBtn">► PLAY ALL</button>
+        </div>
+    </div>
+
+    <!-- Song List -->
+    <div class="song-list" id="songList"></div>
+
+    <!-- Player -->
+    <div class="player">
+        <div class="player-container">
+            <div class="player-top">
+                <div class="player-cover" id="playerCover">
+                    <img src="placeholder-cover.jpg" alt="Now Playing">
+                </div>
+                <div class="player-info">
+                    <div class="player-song" id="playerSong">ALEXANDRA</div>
+                    <div class="player-artist" id="playerArtist">REALITY CLUB</div>
+                </div>
+                <!-- Equalizer / Soundbar -->
+                <div class="equalizer" id="equalizer">
+                    <div class="eq-bar" style="height: 8px;"></div>
+                    <div class="eq-bar" style="height: 12px;"></div>
+                    <div class="eq-bar" style="height: 6px;"></div>
+                    <div class="eq-bar" style="height: 10px;"></div>
+                    <div class="eq-bar" style="height: 14px;"></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="shuffleBtn">🔀</button>
+                <button id="prevBtn">◄◄</button>
+                <button class="play-btn" id="playPauseBtn">►</button>
+                <button id="nextBtn">►►</button>
+                <button id="repeatBtn">↺</button>
+                <button id="lyricsBtn">📄</button>
+            </div>
+
+            <div class="progress">
+                <span class="progress-time" id="progressTime">0:00 / 0:00</span>
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div class="volume">
+                <span>VOL</span>
+                <div class="volume-bar" id="volumeBar">
+                    <div class="volume-fill" id="volumeFill" style="width:40%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lyrics Panel dengan Tombol Back dan Equalizer -->
+    <div class="lyrics-panel" id="lyricsPanel">
+        <div class="lyrics-header">
+            <h3 id="lyricsSongTitle">ALEXANDRA - REALITY CLUB</h3>
+            <button class="lyrics-close" id="lyricsCloseBtn">✕ CLOSE</button>
+        </div>
+        <div class="lyrics-content" id="lyricsContent"></div>
+        <!-- Equalizer di Lyrics Panel -->
+        <div class="lyrics-equalizer" id="lyricsEqualizer">
+            <div class="lyrics-eq-bar" style="height: 8px;"></div>
+            <div class="lyrics-eq-bar" style="height: 16px;"></div>
+            <div class="lyrics-eq-bar" style="height: 12px;"></div>
+            <div class="lyrics-eq-bar" style="height: 20px;"></div>
+            <div class="lyrics-eq-bar" style="height: 14px;"></div>
+            <div class="lyrics-eq-bar" style="height: 10px;"></div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="settings hidden" id="settings">
+        <div class="settings-panel">
+            <h3>✦ SETTINGS ✦</h3>
+            <div class="setting-item">
+                <span>SFX</span>
+                <button id="sfxBtn" class="on">ON</button>
+            </div>
+            <div class="setting-item">
+                <span>SCANLINES</span>
+                <button id="scanBtn" class="on">ON</button>
+            </div>
+            <div class="setting-item">
+                <span>HEARTS</span>
+                <button id="heartsBtn" class="on">ON</button>
+            </div>
+            <div class="setting-item">
+                <span>STARS</span>
+                <button id="starsBtn" class="on">ON</button>
+            </div>
+            <button class="close-settings" id="closeSettings">CLOSE</button>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════
+        // LOAD/SAVE THEME FROM LOCALSTORAGE
+        // ═══════════════════════════════════════════
+        function loadThemeFromStorage() {
+            const savedTheme = localStorage.getItem('cosmic-mint-theme');
+            
+            if (savedTheme) {
+                document.documentElement.classList.add(savedTheme);
+            }
+            
+            // Load other settings
+            const savedSfx = localStorage.getItem('cosmic-mint-sfx');
+            const savedScan = localStorage.getItem('cosmic-mint-scan');
+            const savedHearts = localStorage.getItem('cosmic-mint-hearts');
+            const savedStars = localStorage.getItem('cosmic-mint-stars');
+            const savedVol = localStorage.getItem('cosmic-mint-vol');
+            
+            if (savedSfx !== null) {
+                S.sfxOn = savedSfx === 'true';
+                updateSfxBtn();
+            }
+            if (savedScan !== null) {
+                S.scan = savedScan === 'true';
+                document.body.classList.toggle('no-scan', !S.scan);
+                updateScanBtn();
+            }
+            if (savedHearts !== null) {
+                S.hearts = savedHearts === 'true';
+                updateHeartsBtn();
+                if (S.hearts) startHearts(); else stopHearts();
+            }
+            if (savedStars !== null) {
+                S.stars = savedStars === 'true';
+                updateStarsBtn();
+                if (S.stars) buildStars(); else clearStars();
+            }
+            if (savedVol !== null) {
+                S.vol = parseFloat(savedVol);
+                updateVolumeUI();
+            }
+        }
+
+        function saveSettingsToStorage() {
+            localStorage.setItem('cosmic-mint-sfx', S.sfxOn);
+            localStorage.setItem('cosmic-mint-scan', S.scan);
+            localStorage.setItem('cosmic-mint-hearts', S.hearts);
+            localStorage.setItem('cosmic-mint-stars', S.stars);
+            localStorage.setItem('cosmic-mint-vol', S.vol);
+        }
+
+        // Update UI buttons
+        function updateSfxBtn() {
+            const btn = document.getElementById('sfxBtn');
+            if (btn) {
+                btn.textContent = S.sfxOn ? 'ON' : 'OFF';
+                btn.classList.toggle('on', S.sfxOn);
+            }
+        }
+
+        function updateScanBtn() {
+            const btn = document.getElementById('scanBtn');
+            if (btn) {
+                btn.textContent = S.scan ? 'ON' : 'OFF';
+                btn.classList.toggle('on', S.scan);
+            }
+        }
+
+        function updateHeartsBtn() {
+            const btn = document.getElementById('heartsBtn');
+            if (btn) {
+                btn.textContent = S.hearts ? 'ON' : 'OFF';
+                btn.classList.toggle('on', S.hearts);
+            }
+        }
+
+        function updateStarsBtn() {
+            const btn = document.getElementById('starsBtn');
+            if (btn) {
+                btn.textContent = S.stars ? 'ON' : 'OFF';
+                btn.classList.toggle('on', S.stars);
+            }
+        }
+
+        function updateVolumeUI() {
+            const volumeFill = document.getElementById('volumeFill');
+            if (volumeFill) {
+                volumeFill.style.width = (S.vol * 100) + '%';
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        // AUDIO ENGINE
+        // ═══════════════════════════════════════════
+        let _actx = null;
+        function getCtx() {
+            if (!_actx) _actx = new (window.AudioContext || window.webkitAudioContext)();
+            return _actx;
+        }
+
+        function playTone(freq, type, dur, vol = 0.18) {
+            if (!S.sfxOn) return;
+            try {
+                const c = getCtx(), o = c.createOscillator(), g = c.createGain();
+                o.connect(g); g.connect(c.destination);
+                o.type = type || 'square'; o.frequency.value = freq;
+                g.gain.setValueAtTime(vol * S.vol, c.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+                o.start(); o.stop(c.currentTime + dur);
+            } catch (e) {}
+        }
+
+        const SFX = {
+            hover: () => playTone(587, 'square', .05, .1),
+            click: () => { playTone(784, 'square', .07); setTimeout(() => playTone(988, 'square', .07), 50); },
+            open:  () => { playTone(523, 'square', .1);  setTimeout(() => playTone(784, 'square', .1),  70); },
+            close: () => playTone(392, 'square', .1),
+            tog:   () => playTone(659, 'square', .06),
+        };
+
+        // ═══════════════════════════════════════════
+        // PIXEL STARFIELD
+        // ═══════════════════════════════════════════
+        function buildStars() {
+            const sf = document.getElementById('starfield');
+            sf.innerHTML = '';
+            if (!S.stars) return;
+
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'pxstar';
+                if (i % 5 === 0) star.classList.add('primary');
+                if (i % 7 === 0) star.classList.add('secondary');
+                if (i % 9 === 0) star.classList.add('accent');
+                
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 5 + 's';
+                star.style.animationDuration = (1 + Math.random() * 3) + 's';
+                sf.appendChild(star);
+            }
+        }
+
+        function clearStars() {
+            document.getElementById('starfield').innerHTML = '';
+        }
+
+        // ═══════════════════════════════════════════
+        // DRIFTING HEARTS
+        // ═══════════════════════════════════════════
+        let heartTimer;
+        function spawnHeart() {
+            if (!S.hearts) return;
+            const h = document.createElement('div');
+            h.className = 'hdrift';
+            h.textContent = ['♥','♥','♥','✦','♥'][Math.floor(Math.random()*5)];
+            const dur = 7 + Math.random() * 9;
+            h.style.cssText = `left:${4+Math.random()*92}%;--hd:${dur}s;--fs:${9+Math.random()*9}px`;
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), (dur + .5) * 1000);
+        }
+
+        function startHearts() {
+            if (heartTimer) clearInterval(heartTimer);
+            heartTimer = setInterval(spawnHeart, 1300);
+            spawnHeart();
+        }
+
+        function stopHearts() {
+            clearInterval(heartTimer);
+            document.querySelectorAll('.hdrift').forEach(h => h.remove());
+        }
+
+        // ═══════════════════════════════════════════
+        // AUDIO START
+        // ═══════════════════════════════════════════
+        function startAudio() {
+            if (S.audioStarted) return;
+            S.audioStarted = true;
+            try { getCtx().resume(); } catch(e) {}
+        }
+
+        // ═══════════════════════════════════════════
+        // STATE
+        // ═══════════════════════════════════════════
+        const S = {
+            sfxOn: true,
+            scan: true,
+            hearts: true,
+            stars: true,
+            vol: 0.4,
+            audioStarted: false
+        };
+
+        // DATA LAGU - DENGAN LIRIK YANG SUDAH DIPERBAIKI
+        const songs = [
+            {
+                id: 1,
+                title: 'ALEXANDRA',
+                artist: 'REALITY CLUB',
+                album: 'WHAT DO YOU REALLY KNOW?',
+                duration: '3:49',
+                durationSec: 229,
+                cover: 'album/Reality Club.jpg',
+                albumCover: 'album/Reality Club.jpg',
+                audio: 'audio/Reality Club - Alexandra.mp3',
+                lyrics: [
+                    "Just like a certain motorbike gang from Charming",
+        "Or you're looking for the old ultraviolence",
+        "You're trouble, yes I knew",
+        "Right from the start",
+        "",
+        "And the labyrinth I thought I knew",
+        "Rearranged to shape anew",
+        "At amazement of the excitement",
+        "That once rang true",
+        "",
+        "And if I was a fool for you",
+        "I'd wait 500 million hours",
+        "On a park bench out on the moon",
+        "But in full view of what you are",
+        "Oh",
+        "",
+        "Just like a feline with multiple lines",
+        "She lost a couple but she used to have five",
+        "A savior of mankind",
+        "",
+        "And if I was a fool for you",
+        "I'd wait 500 million hours",
+        "On a park bench out on the moon",
+        "But in full view of what you are",
+        "You're a goddess, you're my rock star",
+        "",
+        "I fell in love with Alexandra",
+        "Even though I barely met her",
+        "Even though we'd break our hearts",
+        "Before we'd even start",
+        "(Before we'd even start)",
+        "",
+        "And if I was a fool for you",
+        "I'd wait 500 million hours",
+        "On a park bench out on the moon",
+        "But in full view of what you are",
+        "You're a goddess, you're my rock star"
+                ]
+            },
+            {
+                id: 2,
+                title: 'BEST PART',
+                artist: 'DANIEL CAESAR ft. H.E.R.',
+                album: 'FREUDIAN',
+                duration: '3:30',
+                durationSec: 210,
+                cover: 'album/daniel.jpg',
+                albumCover: 'album/daniel.jpg',
+                audio: 'audio/H.E.R. - Best Part Ft. Daniel Caesar.mp3',
+                lyrics: [
+                    "You don't know, babe",
+        "When you hold me",
+        "And kiss me slowly",
+        "It's the sweetest thing",
+        "And it don't change",
+        "If I had it my way",
+        "You would know that you are",
+        "",
+        "You're the coffee that I need in the morning",
+        "You're my sunshine in the rain when it's pouring",
+        "Won't you give yourself to me?",
+        "Give it all, oh",
+        "",
+        "I just wanna see",
+        "I just wanna see how beautiful you are",
+        "You know that I see it, I know you're a star",
+        "Where you go, I'll follow, no matter how far",
+        "If life is a movie, know you're the best part, oh-ooh",
+        "You're the best part, oh-ooh",
+        "Best part",
+        "",
+        "It's this sunrise",
+        "And those brown eyes, yes",
+        "You're the one that I desire",
+        "When we wake up",
+        "And then we make love (Make love)",
+        "It makes me feel so nice",
+        "",
+        "You're my water when I'm stuck in the desert",
+        "You're the Tylenol I take when my head hurts",
+        "You're the sunshine on my life",
+        "",
+        "I just wanna see how beautiful you are",
+        "You know that I see it, I know you're a star",
+        "Where you go, I'll follow, no matter how far",
+        "If life is a movie, then you're the best part, oh",
+        "You're the best part, ooh",
+        "Best part"
+                ]
+            },
+            {
+                id: 3,
+                title: 'THERE IS A LIGHT THAT NEVER GOES OUT',
+                artist: 'THE SMITHS',
+                album: 'THE QUEEN IS DEAD',
+                duration: '4:02',
+                durationSec: 242,
+                cover: 'album/smiths.jpg',
+                albumCover: 'album/smiths.jpg',
+                audio: 'audio/The Smiths - There Is a Light That Never Goes Out.mp3',
+                lyrics: [
+                    "Take me out tonight",
+        "Where there's music and there's people",
+        "And they're young and alive",
+        "Driving in your car",
+        "I never, never want to go home",
+        "Because I haven't got one",
+        "Anymore",
+        "",
+        "Take me out tonight",
+        "Because I want to see people",
+        "And I want to see life",
+        "Driving in your car",
+        "Oh please, don't drop me home",
+        "Because it's not my home, it's their home",
+        "And I'm welcome no more",
+        "",
+        "And if a double-decker bus",
+        "Crashes into us",
+        "To die by your side",
+        "Is such a heavenly way to die",
+        "And if a ten tonne truck",
+        "Kills the both of us",
+        "To die by your side",
+        "Well, the pleasure, the privilege is mine",
+        "",
+        "Take me out tonight",
+        "Take me anywhere",
+        "I don't care, I don't care, I don't care",
+        "And in the darkened underpass",
+        "I thought, 'Oh God, my chance has come at last!'",
+        "But then a strange fear gripped me",
+        "And I just couldn't ask",
+        "",
+        "Take me out tonight",
+        "Oh take me anywhere",
+        "I don't care, I don't care, I don't care",
+        "Driving in your car",
+        "I never, never want to go home",
+        "Because I haven't got one",
+        "Oh, I haven't got one",
+        "",
+        "And if a double-decker bus",
+        "Crashes into us",
+        "To die by your side",
+        "Is such a heavenly way to die",
+        "And if a ten tonne truck",
+        "Kills the both of us",
+        "To die by your side",
+        "Well, the pleasure, the privilege is mine",
+        "",
+        "Oh, there is a light and it never goes out",
+        "There is a light and it never goes out",
+        "There is a light and it never goes out",
+        "There is a light and it never goes out"
+                ]
+            },
+            {
+                id: 4,
+                title: 'AM I BOTHERING YOU?',
+                artist: 'REALITY CLUB',
+                album: 'REALITY CLUB PRESENTS...',
+                duration: '3:35',
+                durationSec: 215,
+                cover: 'album/Amibotheringyou.jpg',
+                albumCover: 'album/Amibotheringyou.jpg',
+                audio: 'audio/Reality Club - Am I Bothering You.mp3',
+                lyrics: [
+                    "I've accepted that maybe we're meant for a different time",
+        "But then out of the blue, a spark or two",
+        "Seems to generate",
+        "Now I'm bothering you, it's bothering me",
+        "What can I do? What should I do?",
+        "We're not too far, look where we are",
+        "Bothering me, bothering you",
+        "We fill our days with hypotheticals (ooh-ooh)",
+        "Living vividly in our minds (ooh-ooh)",
+        "We take apart our dreams with heavy heart",
+        "But I know that maybe we can start something right",
+        "But then out of the blue, a spark or two",
+        "Seems to generate",
+        "Now I'm bothering you, it's bothering me",
+        "What can I do? What should I do?",
+        "We're not too far, look where we are",
+        "Bothering me, bothering you",
+        "Lost in the sea, feel so complete",
+        "Love is a myth, depends who you're with",
+        "Bothering me, bothering you, ooh ♪",
+        "But then out of the blue, a spark or two",
+        "Seems to generate",
+        "And you with similar views, you know my heart did incinerate",
+        "Now I'm bothering you, it's bothering me",
+        "What can I do? What should I do?",
+        "We're not too far, look where we are",
+        "Bothering me, bothering you",
+        "Lost in the sea, feel so complete",
+        "Love is a myth, depends who you're with",
+        "Bothering me, bothering you"
+                ]
+            },
+            {
+                id: 5,
+                title: 'INDAHNYA DIRIMU',
+                artist: 'HIVI!',
+                album: 'CERITA INI',
+                duration: '3:50',
+                durationSec: 230,
+                cover: 'album/hivi2.jpg',
+                albumCover: 'album/hivi2.jpg',
+                audio: 'audio/Hivi! - Indahnya Dirimu.mp3',
+                lyrics: [
+                    "Hei, kau yang berdiri di sana",
+        "Tahukah 'ku di sini penuh tanya",
+        "Oh mengapa begitu sempurna",
+        "Hingga detak jantungku berdebar-debar dengan begitu hebatnya",
+        "",
+        "Angin seakan membawaku menghampirimu",
+        "Demi satu niat 'ku selalu menjagamu",
+        "Tanpa tahu untuk apa 'ku membuang waktu",
+        "Wo-o-ow ...",
+        "",
+        "Oh, indahnya dirimu",
+        "Ingin selalu bersamamu di setiap waktu",
+        "Habiskan sisa hidup denganmu",
+        "Wo-o-ow ...",
+        "",
+        "Oh, andaikan dirimu",
+        "Dapat kumiliki sepenuhnya seutuhnya",
+        "'Ku 'kan selalu ada 'tuk dirimu selamanya",
+        "Wo-o-o-wo ...",
+        "",
+        "Oh, indahnya dirimu",
+        "",
+        "Oh mengapa mulutku membisu",
+        "Setiap saat 'ku ada di dekatmu",
+        "Inikah arti cinta bagiku",
+        "Yang selalu merasuki setiap malam dan mimpi-mimpi indahku",
+        "",
+        "Angin seakan membawaku menghampirimu",
+        "Demi satu niat 'ku selalu menjagamu",
+        "Tanpa tahu untuk apa 'ku membuang waktu",
+        "Wo-o-ow ...",
+        "",
+        "Oh, indahnya dirimu",
+        "Ingin selalu bersamamu di setiap waktu",
+        "Habiskan sisa hidup denganmu",
+        "Wo-o-ow ...",
+        "",
+        "Oh, andaikan dirimu",
+        "Dapat kumiliki sepenuhnya seutuhnya",
+        "'Ku 'kan selalu ada 'tuk dirimu selamanya",
+        "",
+        "Angin bawaku menghampirimu",
+        "Demi niat untuk menjagamu",
+        "Tanpa tahu untuk apa 'ku, untuk apa 'ku",
+        "Untuk apa 'ku membuang waktu",
+        "Wo-o-ow ...",
+        "",
+        "Oh, indahnya dirimu",
+        "Ingin selalu bersamamu di setiap waktu",
+        "Habiskan sisa hidup denganmu",
+        "Wo-o-ow ...",
+        "",
+        "Oh, andaikan dirimu",
+        "Dapat kumiliki sepenuhnya seutuhnya",
+        "'Ku 'kan selalu ada 'tuk dirimu selamanya",
+        "Wo-o-ow ...",
+        "",
+        "Oh, indahnya dirimu",
+        "Ingin selalu bersamamu di setiap waktu",
+        "Habiskan sisa hidup denganmu",
+        "Wo-o-ow ...",
+        "",
+        "Oh, andaikan dirimu",
+        "Dapat kumiliki sepenuhnya seutuhnya",
+        "'Ku 'kan selalu ada 'tuk dirimu selamanya"
+                ]
+            },
+            {
+                id: 6,
+                title: 'GLUE SONG',
+                artist: 'BEABADOOBEE',
+                album: 'BEATOPIA',
+                duration: '2:58',
+                durationSec: 178,
+                cover: 'album/glue song.jpg',
+                albumCover: 'album/glue song.jpg',
+                audio: 'audio/beabadoobee - Glue Song.mp3',
+                lyrics: [
+                    "I've never known someone like you, ooh",
+        "Tangled in love, stuck by you, from the glue",
+        "Don't forget to kiss me or else you'll have to miss me",
+        "I guess I'm stuck forever by the glue, oh, and you",
+        "",
+        "Mm-mm",
+        "Mm-mm-mm-mm",
+        "Mm-mm",
+        "",
+        "Finding the right words to use for this song",
+        "I have you in mind, so it won't take so long",
+        "Never thought I'd find you, but you're here, and so I love you",
+        "I'm not wrong when I say, \"I've been stuck by the glue onto you\"",
+        "",
+        "I've been stuck by glue",
+        "Right onto you",
+        "I've been stuck by glue",
+        "",
+        "I've never known",
+        "I've never known someone like you, ooh",
+        "I've never known",
+        "I've never known someone like you, ooh"
+                ]
+            },
+            {
+                id: 7,
+                title: 'HOLD ME DOWN',
+                artist: 'DANIEL CAESAR',
+                album: 'PILOT',
+                duration: '3:26',
+                durationSec: 206,
+                cover: 'album/caesarr.jpg',
+                albumCover: 'album/caesarr.jpg',
+                audio: 'audio/Daniel Caesar - Hold Me Down.mp3',
+                lyrics: [
+                    "If you love me, baby, let me hear you say it",
+        "I know I'm your favorite",
+        "First you love me then you leave me in the basement",
+        "I know I'm your favorite",
+        "",
+        "If you love me, baby, let me hear you say it",
+        "I know I'm your favorite",
+        "First you love me then you leave me on the pavement",
+        "I know I'm your favorite",
+        "",
+        "I got this girl she's making me crazy",
+        "I nearly let her have all my babies",
+        "P- so good it sets me on fire",
+        "I leave myself, I elevate higher",
+        "",
+        "You're fly girl, but you're headed to maybe",
+        "I'll take the time, treat you like a lady, yeah",
+        "My life's a spectacle, a sad story",
+        "Perhaps I find my way to the glory, yes",
+        "",
+        "I'm the one that took you to higher heights",
+        "That's all I was trying to do",
+        "I know you had your dreams of a better life",
+        "This time we ain't making it through",
+        "",
+        "If you love me, baby, let me hear you say it",
+        "I know I'm your favorite",
+        "First you love me then you leave me in the basement",
+        "I know I'm your favorite",
+        "",
+        "If you love me, baby, let me hear you say it",
+        "I know I'm your favorite",
+        "First you love me then you leave me on the pavement",
+        "I know I'm your favorite",
+        "",
+        "You're getting on a plane",
+        "And travelling far away",
+        "You've left me with the pain",
+        "I carry it everyday",
+        "",
+        "Who do you think you are?",
+        "Some kind of celebrity?",
+        "Just wait and see",
+        "",
+        "I never asked for much, only that you stay true",
+        "Need I remind you all the things I do for you?",
+        "Who can I blame, I played the game?",
+        "Well just for now",
+        "I was wondering, can you hold me down?",
+        "I was wondering, can you hold me down?"
+                ]
+            },
+            {
+                id: 8,
+                title: 'GET YOU',
+                artist: 'DANIEL CAESAR ft. KALI UCHIS',
+                album: 'FREUDIAN',
+                duration: '4:38',
+                durationSec: 278,
+                cover: 'album/daniel.jpg',
+                albumCover: 'album/daniel.jpg',
+                audio: 'audio/Daniel Caesar - Get You  ft. Kali Uchis.mp3',
+                lyrics: [
+                    "Through drought and famine, natural disasters",
+        "My baby has been around for me",
+        "Kingdoms have fallen, angels be calling",
+        "None of that could ever make me leave",
+        "",
+        "Every time I look into your eyes I see it",
+        "You're all I need",
+        "Every time I get a bit inside I feel it",
+        "",
+        "Oooooooh, who would've thought I'd get you",
+        "Oooooooh, who would've thought I'd get you",
+        "",
+        "And when we're making love",
+        "Your cries they can be heard from far and wide",
+        "It's only the two of us",
+        "Everything I need's between those thighs",
+        "",
+        "Every time I look into your eyes I see it",
+        "You're all I need",
+        "Every time I get a bit inside I feel it",
+        "",
+        "Oooooooh, who would've thought I'd get you",
+        "Oooooooh, who would've thought I'd get you",
+        "",
+        "And I'll take some time",
+        "Just to be thankful",
+        "That I had days full of you, you",
+        "Before it winds down into",
+        "The memories, It's all just memories",
+        "",
+        "Don't you love when I come around",
+        "(...feel something that's right somebody just tell somebody)",
+        "Build you up then I take you down",
+        "(If you've got someone you like...)",
+        "Don't you love when I come around",
+        "(...feel something that's right somebody just tell somebody)",
+        "Build you up then I take...",
+        "",
+        "Oooooooh, who would've thought I'd get you",
+        "Oooooooh, who would've thought I'd get you",
+        "",
+        "This feels like summer",
+        "Boy you make me feel so alive",
+        "Just be my lover",
+        "Boy you'll lead me to paradise"
+                ]
+            },
+            {
+                id: 9,
+                title: 'SEMENJAK ADA DIRIMU',
+                artist: 'HIVI!',
+                album: 'CERITA INI',
+                duration: '3:45',
+                durationSec: 225,
+                cover: 'album/hivii2.jpeg',
+                albumCover: 'album/hivii2.jpeg',
+                audio: 'audio/Semenjak Ada Dirimu - Hivi!.mp3',
+                lyrics: [
+                    "Semenjak ada dirimu",
+                    "Hidupku begitu indah",
+                    "Semenjak ada dirimu",
+                    "Segalanya begitu berarti",
+                    "Kau bawa cinta yang tulus",
+                    "Kau bawa bahagia selalu",
+                    "Semenjak ada dirimu",
+                    "Ku lengkap telah",
+                    "Tak pernah terbayangkan",
+                    "Hadirnya dirimu",
+                    "Yang selalu setia",
+                    "Menemani setiap langkahku",
+                    "Semenjak ada dirimu",
+                    "Ku temukan cinta sejati",
+                    "Yang selalu ada",
+                    "Di setiap waktu"
+                ]
+            },
+            {
+                id: 10,
+                title: 'ANYTHING YOU WANT',
+                artist: 'REALITY CLUB',
+                album: 'WHAT DO YOU REALLY KNOW?',
+                duration: '3:24',
+                durationSec: 204,
+                cover: 'album/Anything You Want.jpg',
+                albumCover: 'album/Anything You Want.jpg',
+                audio: 'audio/Reality Club - Anything You Want.mp3',
+                lyrics: [
+                    "Trails of smoke trapped in a two by two",
+        "Wasting the night feels right when I'm with you",
+        "It's the shimmer in your eyes",
+        "And the way you let down your disguise",
+        "",
+        "I feel like I've known you for ages",
+        "I feel like with you I'm going places",
+        "",
+        "The same song on repeat",
+        "\"You can call me anything you want\"",
+        "It's fine by me",
+        "Number two out of three",
+        "He says that it's his favorite",
+        "And I can't disagree",
+        "",
+        "We talk about everything",
+        "The important and the mundane",
+        "You know I think you know everything",
+        "But the night's still young",
+        "And there's still so much to gain",
+        "",
+        "I feel like I've known you for ages",
+        "I feel like with you I'm going places",
+        "Ahh, ahh",
+        "",
+        "The same song on repeat",
+        "\"You can call me anything you want\"",
+        "It's fine by me",
+        "Number two out of three",
+        "He says that it's his favorite",
+        "And I can't disagree",
+        "",
+        "The same song on repeat",
+        "\"You can call me anything you want\"",
+        "It's fine by me",
+        "Number two out of three",
+        "He says that it's his favorite",
+        "And I can't disagree",
+        "",
+        "The same song on repeat",
+        "\"You can call me anything you want\"",
+        "It's fine by me",
+        "Number two"
+                ]
+            }
+        ];
+
+        // DOM Elements
+        const songList = document.getElementById('songList');
+        const playerSong = document.getElementById('playerSong');
+        const playerArtist = document.getElementById('playerArtist');
+        const playerCover = document.querySelector('#playerCover img');
+        const playlistCover = document.querySelector('.playlist-cover img');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressTime = document.getElementById('progressTime');
+        const progressFill = document.getElementById('progressFill');
+        const lyricsPanel = document.getElementById('lyricsPanel');
+        const lyricsContent = document.getElementById('lyricsContent');
+        const lyricsSongTitle = document.getElementById('lyricsSongTitle');
+        const lyricsBtn = document.getElementById('lyricsBtn');
+        const lyricsCloseBtn = document.getElementById('lyricsCloseBtn');
+        const loading = document.getElementById('loading');
+        const settings = document.getElementById('settings');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const closeSettings = document.getElementById('closeSettings');
+        const equalizer = document.getElementById('equalizer');
+        const lyricsEqualizer = document.getElementById('lyricsEqualizer');
+
+        // State
+        let currentSong = 0;
+        let isPlaying = false;
+        let currentTime = 0;
+        let lyricsVisible = false;
+        let currentAudio = null;
+        let loadingTimer = null;
+
+        // Render Song List
+        function renderSongList() {
+            songList.innerHTML = '';
+            songs.forEach((song, index) => {
+                const item = document.createElement('div');
+                item.className = `song-item ${index === currentSong ? 'active' : ''}`;
+                item.innerHTML = `
+                    <div class="song-cover"><img src="${song.cover}" alt="${song.title}" onerror="this.src='placeholder.jpg'"></div>
+                    <div class="song-info">
+                        <div class="song-title">${song.title}</div>
+                        <div class="song-artist">${song.artist}</div>
+                    </div>
+                    <div class="song-duration">${song.duration}</div>
+                `;
+                item.addEventListener('mouseenter', () => SFX.hover());
+                item.addEventListener('click', () => playSong(index));
+                songList.appendChild(item);
+            });
+
+            // Update total duration
+            const totalSec = songs.reduce((acc, song) => acc + song.durationSec, 0);
+            const mins = Math.floor(totalSec / 60);
+            const secs = totalSec % 60;
+            document.getElementById('totalDuration').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Show Loading dengan timeout aman
+        function showLoading() {
+            // Clear any existing timeout
+            if (loadingTimer) {
+                clearTimeout(loadingTimer);
+            }
+            // Show loading
+            loading.classList.add('show');
+            
+            // Set timeout to hide loading after max 3 seconds (prevent infinite loading)
+            loadingTimer = setTimeout(() => {
+                hideLoading();
+            }, 3000);
+        }
+
+        // Hide Loading
+        function hideLoading() {
+            loading.classList.remove('show');
+            if (loadingTimer) {
+                clearTimeout(loadingTimer);
+                loadingTimer = null;
+            }
+        }
+
+        // Play Song
+        function playSong(index) {
+            SFX.click();
+            showLoading();
+            
+            // Simulate loading with setTimeout
+            setTimeout(() => {
+                try {
+                    currentSong = index;
+                    const song = songs[currentSong];
+                    
+                    // Update player info
+                    playerSong.textContent = song.title;
+                    playerArtist.textContent = song.artist;
+                    playerCover.src = song.albumCover;
+                    lyricsSongTitle.textContent = `${song.title} - ${song.artist}`;
+                    
+                    // Update active state in list
+                    renderSongList();
+                    
+                    // Reset progress
+                    currentTime = 0;
+                    updateProgress();
+                    
+                    // Load audio
+                    if (currentAudio) {
+                        currentAudio.pause();
+                        currentAudio = null;
+                    }
+                    
+                    // Create new audio element
+                    currentAudio = new Audio(song.audio);
+                    currentAudio.volume = S.vol;
+                    
+                    // Add event listener for when audio is loaded
+                    currentAudio.addEventListener('canplaythrough', () => {
+                        hideLoading();
+                    });
+                    
+                    currentAudio.addEventListener('error', () => {
+                        hideLoading();
+                        console.error('Error loading audio');
+                    });
+                    
+                    // Auto play if was playing
+                    if (isPlaying) {
+                        currentAudio.play().catch(e => {
+                            console.error('Playback failed:', e);
+                            isPlaying = false;
+                            playPauseBtn.textContent = '►';
+                        });
+                    }
+                    
+                    // Render lyrics
+                    renderLyrics();
+                    
+                } catch (error) {
+                    console.error('Error playing song:', error);
+                    hideLoading();
+                }
+            }, 500); // Give time for loading animation to show
+        }
+
+        // Update Progress
+        function updateProgress() {
+            const song = songs[currentSong];
+            const minutes = Math.floor(currentTime / 60);
+            const seconds = Math.floor(currentTime % 60);
+            const totalMinutes = Math.floor(song.durationSec / 60);
+            const totalSeconds = song.durationSec % 60;
+            
+            progressTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')} / ${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+            progressFill.style.width = (currentTime / song.durationSec * 100) + '%';
+        }
+
+        // Toggle Play
+        function togglePlay() {
+            SFX.click();
+            if (!currentAudio) {
+                playSong(currentSong);
+                return;
+            }
+            
+            if (isPlaying) {
+                currentAudio.pause();
+                playPauseBtn.textContent = '►';
+                // Pause equalizer animation
+                equalizer.classList.add('paused');
+                if (lyricsEqualizer) lyricsEqualizer.classList.add('paused');
+            } else {
+                currentAudio.play().catch(e => console.error('Playback failed:', e));
+                playPauseBtn.textContent = '▐▐';
+                // Resume equalizer animation
+                equalizer.classList.remove('paused');
+                if (lyricsEqualizer) lyricsEqualizer.classList.remove('paused');
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Next Song
+        function nextSong() {
+            SFX.click();
+            let next = currentSong + 1;
+            if (next >= songs.length) next = 0;
+            playSong(next);
+        }
+
+        // Prev Song
+        function prevSong() {
+            SFX.click();
+            let prev = currentSong - 1;
+            if (prev < 0) prev = songs.length - 1;
+            playSong(prev);
+        }
+
+        // Render Lyrics
+        function renderLyrics() {
+            const song = songs[currentSong];
+            lyricsContent.innerHTML = song.lyrics.map(line => 
+                `<div class="lyric-line">${line || '&nbsp;'}</div>`
+            ).join('');
+        }
+
+        // Toggle Lyrics
+        function toggleLyrics() {
+            SFX.click();
+            lyricsVisible = !lyricsVisible;
+            lyricsPanel.classList.toggle('show', lyricsVisible);
+        }
+
+        // Close Lyrics
+        function closeLyrics() {
+            SFX.close();
+            lyricsVisible = false;
+            lyricsPanel.classList.remove('show');
+        }
+
+        // Toggle Settings
+        function toggleSettings() {
+            SFX.click();
+            settings.classList.toggle('hidden');
+        }
+
+        // Progress Bar Click
+        document.getElementById('progressBar').addEventListener('click', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            currentTime = percent * songs[currentSong].durationSec;
+            updateProgress();
+            if (currentAudio) {
+                currentAudio.currentTime = currentTime;
+            }
+        });
+
+        // Volume Bar Click
+        document.getElementById('volumeBar').addEventListener('click', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            S.vol = Math.max(0, Math.min(1, percent));
+            document.getElementById('volumeFill').style.width = (S.vol * 100) + '%';
+            if (currentAudio) {
+                currentAudio.volume = S.vol;
+            }
+            saveSettingsToStorage();
+        });
+
+        // Audio Time Update
+        setInterval(() => {
+            if (currentAudio && isPlaying && !isNaN(currentAudio.currentTime)) {
+                currentTime = currentAudio.currentTime;
+                updateProgress();
+                
+                // Auto next when song ends
+                if (currentTime >= songs[currentSong].durationSec - 0.5) {
+                    nextSong();
+                }
+            }
+        }, 100);
+
+        // Event Listeners
+        playPauseBtn.addEventListener('click', togglePlay);
+        nextBtn.addEventListener('click', nextSong);
+        prevBtn.addEventListener('click', prevSong);
+        lyricsBtn.addEventListener('click', toggleLyrics);
+        lyricsCloseBtn.addEventListener('click', closeLyrics);
+        settingsBtn.addEventListener('click', toggleSettings);
+        closeSettings.addEventListener('click', toggleSettings);
+        document.getElementById('playAllBtn').addEventListener('click', () => playSong(0));
+
+        // Back Button
+        document.getElementById('backBtn').addEventListener('click', () => {
+            SFX.click();
+            window.location.href = 'main.html';
+        });
+
+        // Settings toggles
+        document.getElementById('sfxBtn').addEventListener('click', function() {
+            S.sfxOn = !S.sfxOn;
+            this.textContent = S.sfxOn ? 'ON' : 'OFF';
+            this.classList.toggle('on', S.sfxOn);
+            saveSettingsToStorage();
+        });
+
+        document.getElementById('scanBtn').addEventListener('click', function() {
+            S.scan = !S.scan;
+            this.textContent = S.scan ? 'ON' : 'OFF';
+            this.classList.toggle('on', S.scan);
+            document.body.classList.toggle('no-scan', !S.scan);
+            saveSettingsToStorage();
+        });
+
+        document.getElementById('heartsBtn').addEventListener('click', function() {
+            S.hearts = !S.hearts;
+            this.textContent = S.hearts ? 'ON' : 'OFF';
+            this.classList.toggle('on', S.hearts);
+            if (S.hearts) startHearts(); else stopHearts();
+            saveSettingsToStorage();
+        });
+
+        document.getElementById('starsBtn').addEventListener('click', function() {
+            S.stars = !S.stars;
+            this.textContent = S.stars ? 'ON' : 'OFF';
+            this.classList.toggle('on', S.stars);
+            if (S.stars) buildStars(); else clearStars();
+            saveSettingsToStorage();
+        });
+
+        // Initialize
+        loadThemeFromStorage();
+        buildStars();
+        if (S.hearts) startHearts();
+        renderSongList();
+        
+        // Delay play song to ensure loading element is ready
+        setTimeout(() => {
+            playSong(0);
+        }, 100);
+
+        // Start audio on first interaction
+        document.addEventListener('click', startAudio, { once: true });
+
+        // Handle keyboard
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                togglePlay();
+            } else if (e.code === 'ArrowRight') {
+                nextSong();
+            } else if (e.code === 'ArrowLeft') {
+                prevSong();
+            } else if (e.code === 'Escape' && lyricsVisible) {
+                closeLyrics();
+            }
+        });
+    </script>
+</body>
+</html>

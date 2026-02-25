@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>ARCADE HUB ✦</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* ═══════════════════════════════════════════
+   CSS VARIABLES — COSMIC MINT THEME (default)
+═══════════════════════════════════════════ */
+:root {
+  --bg:    #0d0f1e;
+  --mint:  #7fffd4;
+  --lmint: #b0fff0;
+  --lav:   #c8a8f8;
+  --llav:  #e8d8ff;
+  --dlav:  #8060c0;
+  --star:  #ffffc8;
+  --wht:   #f0f8ff;
+  --dim:   #506068;
+  --ldim:  #8898a8;
+  --dark:  #080b18;
+  --panel: #0e1228;
+  --heart: #f0a0c8;
+  --f: 'Press Start 2P', monospace;
+}
+
+/* ── PINK THEME ── */
+:root.theme-pink {
+  --bg:#1e0d18; --mint:#ff8ec8; --lmint:#ffb8e0; --lav:#f8a8d8;
+  --llav:#ffe0f0; --dlav:#c06080; --star:#fff0c8; --wht:#fff5fa;
+  --dim:#684858; --ldim:#a88898; --dark:#180810; --panel:#28101e; --heart:#ff6aaa;
+}
+/* ── LAVENDER THEME ── */
+:root.theme-lavender {
+  --bg:#120d1e; --mint:#c8a8f8; --lmint:#e0ccff; --lav:#a080e8;
+  --llav:#d8c8ff; --dlav:#6040b0; --star:#f8e8ff; --wht:#f5f0ff;
+  --dim:#584868; --ldim:#988aa8; --dark:#0c0818; --panel:#1a1028; --heart:#d898ff;
+}
+/* ── CORAL THEME ── */
+:root.theme-coral {
+  --bg:#1e100d; --mint:#ff9a78; --lmint:#ffbfa8; --lav:#f8c8a0;
+  --llav:#ffe8d8; --dlav:#c06040; --star:#fff8c0; --wht:#fff8f5;
+  --dim:#685048; --ldim:#a89088; --dark:#180a08; --panel:#281410; --heart:#ff7a5a;
+}
+/* ── AQUA THEME ── */
+:root.theme-aqua {
+  --bg:#0d1a1e; --mint:#60e8ff; --lmint:#a0f4ff; --lav:#80d8f0;
+  --llav:#c8f4ff; --dlav:#3090b0; --star:#ffffc8; --wht:#f0fbff;
+  --dim:#406068; --ldim:#78a8b8; --dark:#081418; --panel:#0e2028; --heart:#80d8ff;
+}
+
+/* ── RESET ── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; image-rendering: pixelated; }
+
+html, body {
+  width: 100%; min-height: 100vh;
+  background: var(--bg);
+  color: var(--wht);
+  font-family: var(--f);
+  cursor: default;
+  overflow-x: hidden;
+}
+
+/* ── CRT SCANLINES ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 9500;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px, transparent 3px,
+    rgba(0,0,0,.15) 3px, rgba(0,0,0,.15) 4px
+  );
+}
+body.no-scan::before { display: none; }
+
+/* ═══════════════════════════════════════════
+   LAYER STACK
+═══════════════════════════════════════════ */
+#bg-layer {
+  position: fixed; inset: 0; z-index: 0;
+  background-color: var(--bg);
+  background-size: cover; background-position: center; background-repeat: no-repeat;
+  transition: background-color .4s;
+}
+
+#starfield {
+  position: fixed; inset: 0; z-index: 1;
+  pointer-events: none; overflow: hidden;
+}
+
+.pxstar {
+  position: absolute; width: 2px; height: 2px; background: var(--wht);
+  animation: twinkle var(--td,2s) steps(1) infinite; animation-delay: var(--dl,0s);
+}
+.pxstar.mint { background: var(--mint); }
+.pxstar.lav  { background: var(--lav); }
+.pxstar.gold { background: var(--star); width: 3px; height: 3px; }
+.pxstar.big  { width: 4px; height: 4px; animation: twinkleBig var(--td,3s) steps(1) infinite; animation-delay: var(--dl,0s); }
+.csstar {
+  position: absolute; font-size: var(--fs,10px); color: var(--col,#fff);
+  animation: twinkleStar var(--td,2.5s) steps(1) infinite; animation-delay: var(--dl,0s);
+  pointer-events: none; line-height: 1;
+}
+
+.hdrift {
+  position: fixed; bottom: -30px;
+  font-size: var(--fs,12px); color: var(--heart);
+  animation: hdriftUp var(--hd,8s) linear forwards;
+  opacity: 0; z-index: 2; pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   KEYFRAMES
+═══════════════════════════════════════════ */
+@keyframes twinkle     { 0%,44%,56%,100%{opacity:1} 50%{opacity:0} }
+@keyframes twinkleBig  { 0%,30%,70%,100%{opacity:1} 50%{opacity:.2} }
+@keyframes twinkleStar { 0%,40%,60%,100%{opacity:.8;transform:scale(1)} 50%{opacity:.1;transform:scale(.6)} }
+@keyframes hdriftUp    { 0%{transform:translateY(0) rotate(-8deg);opacity:0} 10%{opacity:.5} 90%{opacity:.2} 100%{transform:translateY(-110vh) rotate(8deg);opacity:0} }
+@keyframes ticker      { from{transform:translateX(0)} to{transform:translateX(-200%)} }
+@keyframes blink       { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+@keyframes heartPulse  { 0%,49%{opacity:1} 50%,100%{opacity:.4} }
+@keyframes panelIn     { from{transform:scaleY(.05) scaleX(.9);opacity:0} to{transform:scaleY(1) scaleX(1);opacity:1} }
+@keyframes fadeInUp    { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes floatCard   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes glowPulse   { 0%,100%{box-shadow:0 0 10px var(--mint),0 0 20px rgba(127,255,212,.2)} 50%{box-shadow:0 0 18px var(--mint),0 0 36px rgba(127,255,212,.4)} }
+@keyframes titleShimmer{ 0%,70%,100%{color:var(--lmint)} 75%{color:var(--star);text-shadow:0 0 12px var(--star)} 85%{color:var(--llav)} }
+@keyframes cardPressIn { 0%{transform:scale(1) translateY(0)} 100%{transform:scale(.95) translateY(3px)} }
+@keyframes iconBob     { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-4px) scale(1.1)} }
+@keyframes hubSubBlink { 0%,60%,100%{opacity:1} 70%,90%{opacity:.4} }
+
+/* ═══════════════════════════════════════════
+   WRAPPER / SCREEN
+═══════════════════════════════════════════ */
+#screen {
+  position: relative; z-index: 3;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center;
+  padding: 0 16px 30px;
+  animation: fadeInUp .6s ease forwards;
+}
+
+/* pixel border frames */
+#frame-outer {
+  position: fixed; inset: 6px; z-index: 8;
+  border: 4px solid var(--mint); pointer-events: none;
+}
+#frame-inner {
+  position: fixed; inset: 14px; z-index: 8;
+  border: 2px solid var(--dlav); pointer-events: none;
+}
+#frame-outer::before, #frame-outer::after {
+  content: '♥'; position: absolute; font-size: 9px;
+  color: var(--heart); padding: 0 3px;
+}
+#frame-outer::before { top: -7px;    left: 50%; transform: translateX(-50%); }
+#frame-outer::after  { bottom: -7px; left: 50%; transform: translateX(-50%); }
+
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
+#header {
+  width: 100%; max-width: 900px;
+  padding: 16px 20px 0;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+#back-btn {
+  background: rgba(8,11,24,.88); border: 2px solid var(--lav);
+  color: var(--lav); font-family: var(--f); font-size: 7px;
+  padding: 6px 10px; cursor: pointer; letter-spacing: 1px;
+  white-space: nowrap;
+}
+#back-btn:hover { background: var(--lav); color: var(--dark); }
+#back-btn:active { transform: translateY(2px); }
+
+#cfg-btn {
+  background: rgba(8,11,24,.88); border: 2px solid var(--mint);
+  color: var(--mint); font-family: var(--f); font-size: 7px;
+  padding: 6px 10px; cursor: pointer; letter-spacing: 1px;
+  white-space: nowrap;
+  transition: background .1s;
+}
+#cfg-btn:hover { background: var(--mint); color: var(--dark); }
+#cfg-btn:active { transform: translateY(2px); }
+
+/* ═══════════════════════════════════════════
+   TICKER - MOBILE FRIENDLY
+═══════════════════════════════════════════ */
+#ticker-wrap {
+  width: 100%; max-width: 900px;
+  border-top: 3px solid var(--mint); border-bottom: 3px solid var(--mint);
+  margin: 10px 0 0; overflow: hidden; height: 22px;
+  display: flex; align-items: center;
+  background: rgba(8,11,24,.78);
+}
+#ticker-wrap::before, #ticker-wrap::after {
+  content: '♥'; font-size: 8px; color: var(--heart);
+  flex-shrink: 0; padding: 0 6px;
+}
+#ticker {
+  white-space: nowrap; font-size: 5px; color: var(--lav);
+  letter-spacing: 2px; animation: ticker 25s linear infinite;
+  padding-left: 100%; flex: 1;
+}
+
+/* ═══════════════════════════════════════════
+   TITLE SECTION - MOBILE OPTIMIZED
+═══════════════════════════════════════════ */
+#title-section {
+  text-align: center; margin: 20px 0 6px;
+  animation: fadeInUp .5s .1s ease both;
+  width: 100%;
+}
+
+#hub-title {
+  font-size: clamp(18px, 6vw, 42px);
+  letter-spacing: clamp(2px, 1.5vw, 10px);
+  display: block; margin-bottom: 8px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+#hub-title .c {
+  display: inline-block;
+  animation: titleShimmer 3s steps(1) infinite;
+  animation-delay: var(--cd, 0s);
+  color: var(--lmint);
+}
+
+#hub-sub {
+  font-size: clamp(6px, 2.5vw, 10px);
+  color: var(--lav); letter-spacing: 2px; display: block; margin-top: 4px;
+  animation: hubSubBlink 2.4s steps(1) infinite;
+  word-break: break-word;
+  padding: 0 10px;
+}
+
+.title-hearts {
+  display: block; font-size: 8px; letter-spacing: 6px;
+  color: var(--heart); margin-top: 6px;
+  animation: heartPulse 1.2s steps(1) infinite;
+}
+
+/* ── Separator ── */
+.sep {
+  width: 100%; max-width: 700px;
+  display: flex; align-items: center; gap: 6px; margin: 12px auto;
+}
+.sep-line { flex: 1; height: 3px; background: var(--mint); }
+.sep-mid  { color: var(--heart); font-size: 8px; flex-shrink: 0; letter-spacing: 3px; }
+
+/* ═══════════════════════════════════════════
+   MENU GRID - FULLY RESPONSIVE
+═══════════════════════════════════════════ */
+#menu-grid {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: fadeInUp .5s .2s ease both;
+  padding: 0 4px;
+}
+
+.grid-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* ── NAV CARD - MOBILE FRIENDLY ── */
+.nav-card {
+  position: relative;
+  width: min(220px, 45vw);
+  min-height: min(160px, 35vw);
+  background: rgba(8,11,24,.88);
+  border: 3px solid var(--dim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 2vw, 12px);
+  padding: clamp(12px, 3vw, 20px) clamp(8px, 2vw, 16px);
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--ldim);
+  transition: border-color .12s, color .12s, transform .12s;
+  animation: floatCard var(--float-dur, 4s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Mobile touch optimization */
+@media (max-width: 480px) {
+  .nav-card {
+    width: 42vw;
+    min-height: 38vw;
+    padding: 12px 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .nav-card {
+    width: 41vw;
+    min-height: 40vw;
+  }
+}
+
+/* glow border */
+.nav-card::before {
+  content: ''; position: absolute; inset: -3px;
+  border: 3px solid transparent;
+  box-shadow: 0 0 0px transparent;
+  transition: box-shadow .2s, border-color .2s;
+  pointer-events: none;
+}
+
+/* corner tag */
+.nav-card::after {
+  content: var(--corner-tag, '✦');
+  position: absolute; top: -8px; right: 6px;
+  font-size: clamp(6px, 2vw, 8px);
+  color: var(--mint);
+  background: var(--dark); padding: 0 3px;
+  opacity: 0; transition: opacity .2s;
+}
+
+.nav-card:hover {
+  border-color: var(--mint);
+  color: var(--wht);
+}
+.nav-card:hover::before {
+  box-shadow: 0 0 12px var(--mint), 0 0 24px rgba(127,255,212,.25);
+  border-color: var(--mint);
+}
+.nav-card:hover::after { opacity: 1; }
+
+/* Touch feedback */
+.nav-card:active {
+  transform: scale(0.95) translateY(2px);
+  border-color: var(--star);
+}
+
+/* ── CARD ICON ── */
+.card-icon {
+  font-size: clamp(24px, 8vw, 36px);
+  line-height: 1;
+  filter: drop-shadow(0 0 6px var(--mint));
+  transition: filter .2s, transform .2s;
+}
+.nav-card:hover .card-icon {
+  filter: drop-shadow(0 0 10px var(--mint)) drop-shadow(0 0 20px rgba(127,255,212,.5));
+  animation: iconBob .6s steps(2) infinite;
+}
+
+/* ── CARD TITLE ── */
+.card-title {
+  font-size: clamp(5px, 2vw, 8px);
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1.5;
+  color: inherit;
+  word-break: break-word;
+}
+
+/* ── CARD BADGE ── */
+.card-badge {
+  position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+  font-size: clamp(4px, 1.5vw, 5px);
+  letter-spacing: 1px;
+  color: var(--dark); background: var(--mint);
+  padding: 2px 4px; white-space: nowrap;
+  opacity: 0; transition: opacity .2s;
+}
+.nav-card:hover .card-badge { opacity: 1; }
+
+/* ── pixel decoration dots ── */
+.nav-card .corner {
+  position: absolute; width: 5px; height: 5px;
+  background: var(--dim); transition: background .2s;
+}
+.nav-card:hover .corner { background: var(--mint); }
+.corner.tl { top: 3px; left: 3px; }
+.corner.tr { top: 3px; right: 3px; }
+.corner.bl { bottom: 3px; left: 3px; }
+.corner.br { bottom: 3px; right: 3px; }
+
+/* ── INSERT COIN ── */
+#insert {
+  font-size: clamp(5px, 2.5vw, 7px);
+  color: var(--lmint); letter-spacing: 2px;
+  margin: 10px 0 0;
+  animation: blink 1s steps(1) infinite;
+  text-align: center;
+  width: 100%;
+}
+
+/* ── FOOTER - MOBILE FRIENDLY ── */
+#footer {
+  width: 100%; max-width: 900px;
+  border-top: 3px solid var(--mint);
+  margin: 15px 0 10px;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ft { 
+  font-size: clamp(4px, 2vw, 5px); 
+  color: var(--dim); 
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.ft-heart { color: var(--heart); }
+
+/* ═══════════════════════════════════════════
+   SETTINGS OVERLAY - MOBILE OPTIMIZED
+═══════════════════════════════════════════ */
+.overlay {
+  position: fixed; inset: 0; z-index: 6000;
+  background: rgba(5,6,16,.96);
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px;
+  overflow-y: auto;
+}
+.overlay.hidden { display: none; }
+
+.panel {
+  width: 100%; max-width: 460px; margin: auto;
+  background: var(--panel); border: 4px solid var(--mint);
+  outline: 2px solid var(--dark);
+  max-height: 90vh; overflow-y: auto;
+  display: flex; flex-direction: column;
+  animation: panelIn .08s steps(1); position: relative;
+}
+.panel::before, .panel::after {
+  content: '♥'; position: absolute; font-size: 8px;
+  color: var(--heart); background: var(--panel); padding: 0 3px; z-index: 1;
+}
+.panel::before { top: -7px; right: 12px; }
+.panel::after  { bottom: -7px; right: 12px; }
+
+.panel-hdr {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; border-bottom: 3px solid var(--mint);
+  background: rgba(8,11,24,.92); flex-shrink: 0;
+}
+.panel-title { font-size: clamp(6px, 2.5vw, 8px); color: var(--mint); letter-spacing: 2px; }
+.close-btn {
+  background: var(--dark); border: 2px solid var(--heart);
+  color: var(--heart); font-family: var(--f); font-size: clamp(6px, 2.5vw, 8px);
+  padding: 3px 6px; cursor: pointer;
+}
+.close-btn:hover { background: var(--heart); color: var(--dark); }
+.close-btn:active { transform: translateY(2px); }
+
+.panel-body {
+  overflow-y: auto; flex: 1; padding: 14px 12px;
+  scrollbar-width: thin; scrollbar-color: var(--mint) var(--dark);
+}
+.panel-body::-webkit-scrollbar { width: 4px; }
+.panel-body::-webkit-scrollbar-thumb { background: var(--mint); }
+.panel-body::-webkit-scrollbar-track { background: var(--dark); }
+
+.p-sec { margin-bottom: 16px; }
+.p-sec-lbl {
+  font-size: clamp(4px, 2vw, 5px); color: var(--lav); letter-spacing: 1px;
+  display: block; margin-bottom: 8px;
+  border-bottom: 2px solid var(--dim); padding-bottom: 4px;
+}
+.p-row { 
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px; 
+  font-size: clamp(5px, 2vw, 6px); flex-wrap: wrap;
+}
+.p-lbl { color: var(--ldim); min-width: 70px; flex-shrink: 0; }
+
+.tog {
+  background: var(--dark); border: 2px solid var(--dim);
+  color: var(--dim); font-family: var(--f); font-size: clamp(5px, 2vw, 6px);
+  padding: 4px 10px; cursor: pointer; letter-spacing: 1px;
+  min-width: 50px;
+}
+.tog.on    { border-color: var(--mint); color: var(--mint); }
+.tog:hover { border-color: var(--lav);  color: var(--lav); }
+.tog:active { transform: translateY(2px); }
+
+/* slider */
+.slid-wrap  { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 140px; }
+.slid-track { flex: 1; height: 10px; background: var(--dark); border: 2px solid var(--dim); position: relative; }
+.slid-fill  { position: absolute; left: 0; top: 0; height: 100%; background: var(--mint); opacity: .6; pointer-events: none; z-index: 1; }
+input[type=range] {
+  -webkit-appearance: none; appearance: none;
+  position: relative; z-index: 2;
+  width: 100%; height: 100%; background: transparent; cursor: pointer; margin: 0; padding: 0;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 10px; height: 14px;
+  background: var(--lav); border: 2px solid var(--llav); cursor: pointer;
+}
+input[type=range]::-moz-range-thumb {
+  width: 10px; height: 14px; background: var(--lav);
+  border: 2px solid var(--llav); cursor: pointer; border-radius: 0;
+}
+.slid-val { font-size: clamp(4px, 1.8vw, 5px); color: var(--mint); min-width: 24px; text-align: right; }
+
+/* theme grid - mobile */
+.theme-grid { 
+  display: grid; 
+  grid-template-columns: repeat(5, 1fr); 
+  gap: 4px; 
+}
+@media (max-width: 480px) {
+  .theme-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.theme-card {
+  background: var(--dark); border: 2px solid var(--dim); cursor: pointer;
+  padding: 4px; display: flex; flex-direction: column; align-items: center; gap: 3px; position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+.theme-card:hover { border-color: var(--ldim); }
+.theme-card.on    { border-color: var(--mint); }
+.theme-card.on::after {
+  content: '✦'; position: absolute; top: -6px; right: 0;
+  font-size: 6px; color: var(--mint); background: var(--panel); padding: 0 2px;
+}
+.tc-preview { display: flex; gap: 2px; justify-content: center; }
+.tc-preview span { width: 6px; height: 6px; display: block; border: 1px solid rgba(255,255,255,.12); }
+.tc-name { font-size: 4px; color: var(--ldim); letter-spacing: 0.5px; text-align: center; }
+
+/* ═══════════════════════════════════════════
+   EXTRA MOBILE OPTIMIZATIONS
+═══════════════════════════════════════════ */
+@media (max-width: 480px) {
+  #header { padding: 12px 12px 0; }
+  #back-btn, #cfg-btn { 
+    font-size: 6px; 
+    padding: 5px 8px; 
+  }
+  #ticker { font-size: 4px; letter-spacing: 1px; }
+  
+  .grid-row { gap: 8px; }
+  
+  .nav-card .corner { width: 4px; height: 4px; }
+  .corner.tl { top: 2px; left: 2px; }
+  .corner.tr { top: 2px; right: 2px; }
+  .corner.bl { bottom: 2px; left: 2px; }
+  .corner.br { bottom: 2px; right: 2px; }
+  
+  .sep-mid { font-size: 7px; letter-spacing: 2px; }
+  
+  #footer { 
+    padding: 6px 8px; 
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .ft { 
+    font-size: 4px; 
+    white-space: normal;
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 360px) {
+  #hub-title { font-size: 16px; letter-spacing: 1px; }
+  #hub-sub { font-size: 5px; }
+  
+  .nav-card {
+    width: 40vw;
+    min-height: 42vw;
+  }
+  .card-icon { font-size: 22px; }
+  .card-title { font-size: 4px; }
+  
+  .sep-mid { font-size: 6px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     LAYER 1 — BG (color + image only)
+═══════════════════════════════════════════ -->
+<div id="bg-layer"></div>
+
+<!-- ══════════════════════════════════════════
+     LAYER 2 — PIXEL STARFIELD
+═══════════════════════════════════════════ -->
+<div id="starfield"></div>
+
+<!-- ══════════════════════════════════════════
+     LAYER 3 — SCREEN UI
+═══════════════════════════════════════════ -->
+<div id="frame-outer"></div>
+<div id="frame-inner"></div>
+
+<div id="screen">
+
+  <!-- ── HEADER ── -->
+  <div id="header" class="w-full">
+    <button id="back-btn">◄ BACK</button>
+    <button id="cfg-btn">✦ CFG</button>
+  </div>
+
+  <!-- ── TICKER ── -->
+  <div id="ticker-wrap" class="w-full">
+    <span id="ticker">
+      ✦ BIRTHDAY AUYEL ♥ INSERT COIN ✦ PRESS START ♥ CEWE GW CANTIK BGT ✦
+      NIKAH YUK AUREL ♥ BIRTHDAYNYA CEWE REI ✦ INSERT COIN ♥ PRESS START ✦
+      © 2026 PUNYA NYA REI ♥ AUREL TUH PUNYA RAIHAN ✦
+      &nbsp;&nbsp;
+    </span>
+  </div>
+
+  <!-- ── TITLE ── -->
+  <div id="title-section">
+
+    <span id="hub-title">
+          <span class="c" style="--cd:.62s">H</span><span class="c" style="--cd:.74s">I</span><span class="c" style="--cd:.86s">I</span><span class="c" style="--cd:.86s">I</span>
+      <!-- ARCADE -->
+      <span class="c" style="--cd:0s">A</span><span class="c" style="--cd:.10s">U</span><span class="c" style="--cd:.20s">R</span><span class="c" style="--cd:.30s">E</span><span class="c" style="--cd:.40s">L</span><span class="c" style="--cd:.50s">L</span>
+      <span style="display:inline-block;width:clamp(4px, 2vw, 18px)">&nbsp;</span>
+      <!-- HUB -->
+    </span>
+
+    <span id="hub-sub">✦ SELECT DESTINATION ✦</span>
+    <span class="title-hearts">♥ &nbsp; ♥ &nbsp; ♥</span>
+  </div>
+
+  <!-- ── SEPARATOR ── -->
+  <div class="sep">
+    <div class="sep-line"></div>
+    <span class="sep-mid">♥ ✦ ♥</span>
+    <div class="sep-line"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MAIN MENU GRID - FULLY RESPONSIVE CARDS
+  ═══════════════════════════════════════════ -->
+  <div id="menu-grid">
+
+    <!-- ROW 1: 2 cards -->
+    <div class="grid-row">
+
+      <!-- GALLERY -->
+      <a href="gallery.html" class="nav-card" style="--float-dur: 3.5s; --float-delay: 0s;">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <span class="card-icon">
+          <img src="assets/camera.gif" class="w-[clamp(50px,15vw,80px)] h-[clamp(50px,15vw,80px)] object-contain" alt="Camera">
+        </span>
+        <span class="card-title">GALLERY</span>
+        <span class="card-badge">✦ VIEW ✦</span>
+      </a>
+
+      <!-- MUSIC PLAYER -->
+      <a href="musicplayer.html" class="nav-card" style="--float-dur: 4.2s; --float-delay: 0.2s;">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <span class="card-icon">
+          <img src="assets/music.gif" class="w-[clamp(45px,14vw,70px)] h-[clamp(45px,14vw,70px)] object-contain" alt="Music">
+        </span>
+        <span class="card-title">PLAY MUSIC</span>
+        <span class="card-badge">♪ LISTEN ♪</span>
+      </a>
+
+    </div>
+
+    <!-- ROW 2: 3 cards -->
+    <div class="grid-row">
+
+
+      <!-- MEMORY BOOK -->
+      <a href="memorybook.html" class="nav-card" style="--float-dur: 4.5s; --float-delay: 0.1s;">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <span class="card-icon">
+          <img src="assets/book.gif" class="w-[clamp(50px,15vw,80px)] h-[clamp(50px,15vw,80px)] object-contain" alt="Book">
+        </span>
+        <span class="card-title">READ THE BOOK</span>
+        <span class="card-badge">📖 OPEN 📖</span>
+      </a>
+
+      <!-- MESSAGE -->
+      <a href="message.html" class="nav-card" style="--float-dur: 4.0s; --float-delay: 0.3s;">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <span class="card-icon">
+          <img src="assets/envelope.gif" class="w-[clamp(45px,14vw,70px)] h-[clamp(45px,14vw,70px)] object-contain" alt="Envelope">
+        </span>
+        <span class="card-title">MESSAGE FOR YOU</span>
+        <span class="card-badge">💌 READ 💌</span>
+      </a>
+
+    </div>
+  </div><!-- /menu-grid -->
+
+  <!-- ── INSERT COIN ── -->
+  <div id="insert">♥ INSERT COIN ♥</div>
+
+  <!-- ── SOFT SEPARATOR ── -->
+  <div class="sep" style="margin-top:8px">
+    <div class="sep-line" style="background:var(--dlav);height:2px"></div>
+    <span class="sep-mid" style="color:var(--lav);font-size:clamp(5px,2.5vw,7px)">✦ ✦ ✦</span>
+    <div class="sep-line" style="background:var(--dlav);height:2px"></div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div id="footer">
+    <span class="ft">↑↓←→ NAVIGATE <span class="ft-heart">♥</span> ENTER SELECT</span>
+    <span class="ft"> PUNYA NYA REI 2026</span>
+  </div>
+
+</div><!-- /screen -->
+
+
+<!-- ══════════════════════════════════════════
+     SETTINGS OVERLAY
+═══════════════════════════════════════════ -->
+<div class="overlay hidden" id="cfg-overlay">
+  <div class="panel">
+
+    <div class="panel-hdr">
+      <span class="panel-title">♥ SETTINGS ✦</span>
+      <button class="close-btn" id="close-cfg">✕</button>
+    </div>
+
+    <div class="panel-body">
+
+      <!-- COLOR THEME -->
+      <div class="p-sec">
+        <span class="p-sec-lbl">✦ COLOR THEME ✦</span>
+        <div class="theme-grid" id="theme-grid">
+
+          <button class="theme-card on" data-theme="">
+            <div class="tc-preview">
+              <span style="background:#7fffd4"></span>
+              <span style="background:#c8a8f8"></span>
+              <span style="background:#f0a0c8"></span>
+              <span style="background:#ffffc8"></span>
+            </div>
+            <span class="tc-name">MINT</span>
+          </button>
+
+          <button class="theme-card" data-theme="theme-pink">
+            <div class="tc-preview">
+              <span style="background:#ff8ec8"></span>
+              <span style="background:#f8a8d8"></span>
+              <span style="background:#ff6aaa"></span>
+              <span style="background:#fff0c8"></span>
+            </div>
+            <span class="tc-name">PINKY</span>
+          </button>
+
+          <button class="theme-card" data-theme="theme-lavender">
+            <div class="tc-preview">
+              <span style="background:#c8a8f8"></span>
+              <span style="background:#a080e8"></span>
+              <span style="background:#d898ff"></span>
+              <span style="background:#f8e8ff"></span>
+            </div>
+            <span class="tc-name">LAVENDER</span>
+          </button>
+
+          <button class="theme-card" data-theme="theme-coral">
+            <div class="tc-preview">
+              <span style="background:#ff9a78"></span>
+              <span style="background:#f8c8a0"></span>
+              <span style="background:#ff7a5a"></span>
+              <span style="background:#fff8c0"></span>
+            </div>
+            <span class="tc-name">CORAL</span>
+          </button>
+
+          <button class="theme-card" data-theme="theme-aqua">
+            <div class="tc-preview">
+              <span style="background:#60e8ff"></span>
+              <span style="background:#80d8f0"></span>
+              <span style="background:#80d8ff"></span>
+              <span style="background:#ffffc8"></span>
+            </div>
+            <span class="tc-name">AQUA</span>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- AUDIO -->
+      <div class="p-sec">
+        <span class="p-sec-lbl">✦ AUDIO ✦</span>
+
+        <div class="p-row">
+          <span class="p-lbl">BGM</span>
+          <button class="tog on" id="bgm-tog">ON</button>
+        </div>
+
+        <div class="p-row">
+          <span class="p-lbl">SFX</span>
+          <button class="tog on" id="sfx-tog">ON</button>
+        </div>
+
+        <div class="p-row">
+          <span class="p-lbl">VOLUME</span>
+          <div class="slid-wrap">
+            <div class="slid-track">
+              <div class="slid-fill" id="slid-fill" style="width:40%"></div>
+              <input type="range" id="vol-slid" min="0" max="100" value="40"/>
+            </div>
+            <span class="slid-val" id="vol-val">40</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DISPLAY -->
+      <div class="p-sec">
+        <span class="p-sec-lbl">♥ DISPLAY ♥</span>
+
+        <div class="p-row">
+          <span class="p-lbl">SCANLINES</span>
+          <button class="tog on" id="scan-tog">ON</button>
+        </div>
+
+        <div class="p-row">
+          <span class="p-lbl">HEARTS ♥</span>
+          <button class="tog on" id="hrt-tog">ON</button>
+        </div>
+
+        <div class="p-row">
+          <span class="p-lbl">PIXEL STARS</span>
+          <button class="tog on" id="star-tog">ON</button>
+        </div>
+      </div>
+
+    </div><!-- /panel-body -->
+
+    <div class="panel-ftr" style="border-top:3px solid var(--mint);padding:10px 14px;text-align:center;flex-shrink:0;background:var(--dark)">
+      <button class="nav-card" id="apply-cfg"
+        style="width:auto;padding:8px 20px;font-size:clamp(5px,2.5vw,7px);display:inline-flex;min-height:auto;animation:none;float:none;border:2px solid var(--mint);color:var(--mint);gap:6px">
+        ► APPLY ♥ CLOSE
+      </button>
+    </div>
+
+  </div><!-- /panel -->
+</div><!-- /overlay -->
+
+<script>
+  'use strict';
+
+/* ═══════════════════════════════════════════
+   LOAD/SAVE SETTINGS FROM LOCALSTORAGE
+═══════════════════════════════════════════ */
+function loadSettingsFromStorage() {
+  const savedTheme = localStorage.getItem('cosmic-mint-theme');
+  const savedBgColor = localStorage.getItem('cosmic-mint-bgColor');
+  const savedBgm = localStorage.getItem('cosmic-mint-bgm');
+  const savedSfx = localStorage.getItem('cosmic-mint-sfx');
+  const savedVol = localStorage.getItem('cosmic-mint-vol');
+  const savedScan = localStorage.getItem('cosmic-mint-scan');
+  const savedHearts = localStorage.getItem('cosmic-mint-hearts');
+  const savedStars = localStorage.getItem('cosmic-mint-stars');
+
+  // Theme
+  if (savedTheme) {
+    S.theme = savedTheme;
+    document.documentElement.classList.add(savedTheme);
+  }
+  
+  // Background color
+  if (savedBgColor) {
+    S.bgColor = savedBgColor;
+  }
+
+  // Audio settings
+  if (savedBgm !== null) S.bgmOn = savedBgm === 'true';
+  if (savedSfx !== null) S.sfxOn = savedSfx === 'true';
+  if (savedVol !== null) S.vol = parseFloat(savedVol);
+
+  // Display settings
+  if (savedScan !== null) S.scan = savedScan === 'true';
+  if (savedHearts !== null) S.hearts = savedHearts === 'true';
+  if (savedStars !== null) S.stars = savedStars === 'true';
+
+  // Update UI toggles
+  updateToggles();
+}
+
+function saveSettingsToStorage() {
+  localStorage.setItem('cosmic-mint-theme', S.theme);
+  localStorage.setItem('cosmic-mint-bgColor', S.bgColor);
+  localStorage.setItem('cosmic-mint-bgm', S.bgmOn);
+  localStorage.setItem('cosmic-mint-sfx', S.sfxOn);
+  localStorage.setItem('cosmic-mint-vol', S.vol);
+  localStorage.setItem('cosmic-mint-scan', S.scan);
+  localStorage.setItem('cosmic-mint-hearts', S.hearts);
+  localStorage.setItem('cosmic-mint-stars', S.stars);
+}
+
+function updateToggles() {
+  // Update toggle buttons text and class
+  const bgmBtn = $('bgm-tog');
+  const sfxBtn = $('sfx-tog');
+  const scanBtn = $('scan-tog');
+  const heartsBtn = $('hrt-tog');
+  const starsBtn = $('star-tog');
+
+  if (bgmBtn) {
+    bgmBtn.textContent = S.bgmOn ? 'ON' : 'OFF';
+    bgmBtn.classList.toggle('on', S.bgmOn);
+  }
+  if (sfxBtn) {
+    sfxBtn.textContent = S.sfxOn ? 'ON' : 'OFF';
+    sfxBtn.classList.toggle('on', S.sfxOn);
+  }
+  if (scanBtn) {
+    scanBtn.textContent = S.scan ? 'ON' : 'OFF';
+    scanBtn.classList.toggle('on', S.scan);
+    if (!S.scan) document.body.classList.add('no-scan');
+    else document.body.classList.remove('no-scan');
+  }
+  if (heartsBtn) {
+    heartsBtn.textContent = S.hearts ? 'ON' : 'OFF';
+    heartsBtn.classList.toggle('on', S.hearts);
+  }
+  if (starsBtn) {
+    starsBtn.textContent = S.stars ? 'ON' : 'OFF';
+    starsBtn.classList.toggle('on', S.stars);
+  }
+
+  // Update volume slider
+  const volSlid = $('vol-slid');
+  const volVal = $('vol-val');
+  const slidFill = $('slid-fill');
+  if (volSlid && volVal && slidFill) {
+    volSlid.value = S.vol * 100;
+    volVal.textContent = Math.round(S.vol * 100);
+    slidFill.style.width = (S.vol * 100) + '%';
+  }
+
+  // Update theme cards
+  document.querySelectorAll('.theme-card').forEach(c => {
+    c.classList.toggle('on', c.dataset.theme === S.theme);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   AUDIO ENGINE
+═══════════════════════════════════════════ */
+let _actx = null;
+function getCtx() {
+  if (!_actx) _actx = new (window.AudioContext || window.webkitAudioContext)();
+  return _actx;
+}
+function playTone(freq, type, dur, vol = 0.18) {
+  if (!S.sfxOn) return;
+  try {
+    const c = getCtx(), o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol * S.vol, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+    o.start(); o.stop(c.currentTime + dur);
+  } catch (e) {}
+}
+
+const SFX = {
+  hover: () => playTone(587, 'square', .05, .1),
+  click: () => { playTone(784, 'square', .07); setTimeout(() => playTone(988, 'square', .07), 50); },
+  open:  () => { playTone(523, 'square', .1);  setTimeout(() => playTone(784, 'square', .1),  70); },
+  close: () => playTone(392, 'square', .1),
+  tog:   () => playTone(659, 'square', .06),
+};
+
+// BGM — dreamy 8-bit melody
+const BGM_SONG = [
+  [784,.18],[880,.18],[988,.18],[1047,.36],[880,.18],[784,.36],
+  [659,.18],[784,.18],[880,.18],[988,.36],[880,.18],[784,.36],
+  [988,.18],[1047,.18],[1175,.18],[1319,.36],[1175,.18],[988,.36],
+  [880,.18],[988,.18],[1047,.18],[1175,.36],[988,.18],[880,.54],
+  [784,.18],[880,.18],[988,.18],[1047,.18],[880,.18],[784,.18],[659,.54],
+];
+let bgmIdx = 0, bgmTick = null;
+
+function scheduleBGM() {
+  if (!S.bgmOn || !_actx) return;
+  const [f, d] = BGM_SONG[bgmIdx++ % BGM_SONG.length];
+  try {
+    const c = getCtx(), o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = 'square'; o.frequency.value = f;
+    g.gain.setValueAtTime(0.055 * S.vol, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + d * .82);
+    o.start(); o.stop(c.currentTime + d);
+    bgmTick = setTimeout(scheduleBGM, d * 1000 + 8);
+  } catch (e) {}
+}
+
+function startBGM() { clearTimeout(bgmTick); try { getCtx().resume(); } catch (e) {} bgmIdx = 0; scheduleBGM(); }
+function stopBGM()  { clearTimeout(bgmTick); bgmTick = null; }
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+const S = {
+  bgmOn: true, sfxOn: true, vol: 0.4,
+  scan: true, hearts: true, stars: true,
+  theme: '',   // '' | 'theme-pink' | 'theme-lavender' | 'theme-coral' | 'theme-aqua'
+  bgColor: '#0d0f1e', bgImage: null,
+  audioStarted: false,
+};
+
+/* ═══════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const sfx = n => S.sfxOn && SFX[n] && SFX[n]();
+
+function startAudio() {
+  if (S.audioStarted) return;
+  S.audioStarted = true;
+  try { getCtx().resume(); } catch (e) {}
+  if (S.bgmOn) startBGM();
+}
+
+/* ═══════════════════════════════════════════
+   PIXEL STARFIELD
+═══════════════════════════════════════════ */
+function buildStars() {
+  const sf = $('starfield');
+  sf.innerHTML = '';
+  if (!S.stars) return;
+
+  const types = [
+    { cls: '',     n: 60 },
+    { cls: 'mint', n: 25 },
+    { cls: 'lav',  n: 25 },
+    { cls: 'gold', n: 15 },
+    { cls: 'big',  n: 8  },
+  ];
+  types.forEach(({ cls, n }) => {
+    for (let i = 0; i < n; i++) {
+      const d = document.createElement('div');
+      d.className = 'pxstar' + (cls ? ' ' + cls : '');
+      d.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--td:${1+Math.random()*3.5}s;--dl:${Math.random()*4}s`;
+      sf.appendChild(d);
+    }
+  });
+
+  const syms = ['✦','✦','★','✧','✦'];
+  const cols = ['var(--star)','var(--mint)','var(--lav)','var(--lmint)','var(--llav)'];
+  for (let i = 0; i < 40; i++) {
+    const d = document.createElement('div');
+    d.className = 'csstar';
+    d.textContent = syms[Math.floor(Math.random() * syms.length)];
+    d.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--fs:${8+Math.random()*10}px;--col:${cols[Math.floor(Math.random()*cols.length)]};--td:${1.5+Math.random()*4}s;--dl:${Math.random()*4}s`;
+    sf.appendChild(d);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   DRIFTING HEARTS
+═══════════════════════════════════════════ */
+let heartTimer;
+const HSYMS = ['♥','♥','♥','✦','♥'];
+
+function spawnHeart() {
+  if (!S.hearts) return;
+  const h = document.createElement('div');
+  h.className = 'hdrift';
+  h.textContent = HSYMS[Math.floor(Math.random() * HSYMS.length)];
+  const dur = 7 + Math.random() * 9;
+  h.style.cssText = `left:${4+Math.random()*92}%;--hd:${dur}s;--fs:${9+Math.random()*9}px`;
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), (dur + .5) * 1000);
+}
+
+function startHearts() { 
+  if (heartTimer) clearInterval(heartTimer);
+  heartTimer = setInterval(spawnHeart, 1300); 
+  spawnHeart();
+}
+function stopHearts()  {
+  clearInterval(heartTimer);
+  document.querySelectorAll('.hdrift').forEach(h => h.remove());
+}
+
+/* ═══════════════════════════════════════════
+   APPLY BG — only ever touches #bg-layer
+═══════════════════════════════════════════ */
+function applyBg() {
+  const bg = $('bg-layer');
+  bg.style.backgroundColor = S.bgColor;
+  bg.style.backgroundImage = S.bgImage ? `url(${S.bgImage})` : 'none';
+}
+
+/* ═══════════════════════════════════════════
+   THEME
+═══════════════════════════════════════════ */
+const THEMES_DATA = {
+  '':               { bg: '#0d0f1e', swatches: ['#7fffd4','#c8a8f8','#f0a0c8','#ffffc8'], label: 'MINT'     },
+  'theme-pink':     { bg: '#1e0d18', swatches: ['#ff8ec8','#f8a8d8','#ff6aaa','#fff0c8'], label: 'PINKY'    },
+  'theme-lavender': { bg: '#120d1e', swatches: ['#c8a8f8','#a080e8','#d898ff','#f8e8ff'], label: 'LAVENDER' },
+  'theme-coral':    { bg: '#1e100d', swatches: ['#ff9a78','#f8c8a0','#ff7a5a','#fff8c0'], label: 'CORAL'    },
+  'theme-aqua':     { bg: '#0d1a1e', swatches: ['#60e8ff','#80d8f0','#80d8ff','#ffffc8'], label: 'AQUA'     },
+};
+
+function applyTheme(key) {
+  Object.keys(THEMES_DATA).filter(k => k).forEach(k => document.documentElement.classList.remove(k));
+  if (key) document.documentElement.classList.add(key);
+  S.theme = key;
+  S.bgColor = THEMES_DATA[key].bg;
+  applyBg();
+  if (S.stars) buildStars();
+  document.querySelectorAll('.theme-card').forEach(c => {
+    c.classList.toggle('on', c.dataset.theme === key);
+  });
+  sfx('tog');
+  saveSettingsToStorage();
+}
+
+/* ═══════════════════════════════════════════
+   SETTINGS PANEL
+═══════════════════════════════════════════ */
+function openSettings()  { $('cfg-overlay').classList.remove('hidden'); sfx('open'); }
+function closeSettings() { $('cfg-overlay').classList.add('hidden');    sfx('close'); }
+
+function makeTog(btnId, key, onFn, offFn) {
+  const btn = $(btnId);
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    sfx('tog');
+    S[key] = !S[key];
+    btn.textContent = S[key] ? 'ON' : 'OFF';
+    btn.classList.toggle('on', S[key]);
+    S[key] ? onFn && onFn() : offFn && offFn();
+    saveSettingsToStorage();
+  });
+}
+
+/* ═══════════════════════════════════════════
+   NAV CARDS — hover + click SFX
+═══════════════════════════════════════════ */
+function initCards() {
+  document.querySelectorAll('.nav-card').forEach(card => {
+    card.addEventListener('mouseenter', () => sfx('hover'));
+    card.addEventListener('click', (e) => {
+      sfx('click');
+      // Allow default navigation after sound
+      if (card.tagName === 'A') {
+        e.preventDefault();
+        setTimeout(() => { window.location.href = card.href; }, 120);
+      }
+    });
+    // Touch events for mobile
+    card.addEventListener('touchstart', (e) => {
+      sfx('click');
+    }, { passive: true });
+  });
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  // Load settings from localStorage first
+  loadSettingsFromStorage();
+  
+  applyBg();
+  buildStars();
+  if (S.hearts) startHearts();
+  initCards();
+
+  // ── Back button ──
+  $('back-btn').addEventListener('click', () => {
+    sfx('click');
+    setTimeout(() => { window.location.href = 'index.html'; }, 120);
+  });
+
+  // ── Settings button ──
+  $('cfg-btn').addEventListener('click', () => { startAudio(); openSettings(); });
+  $('close-cfg').addEventListener('click', closeSettings);
+  $('apply-cfg').addEventListener('click', closeSettings);
+  $('cfg-overlay').addEventListener('click', e => { if (e.target === $('cfg-overlay')) closeSettings(); });
+
+  // ── Toggles ──
+  makeTog('bgm-tog',  'bgmOn',  startBGM,  stopBGM);
+  makeTog('sfx-tog',  'sfxOn');
+  makeTog('scan-tog', 'scan',
+    () => document.body.classList.remove('no-scan'),
+    () => document.body.classList.add('no-scan')
+  );
+  makeTog('hrt-tog',  'hearts', startHearts, stopHearts);
+  makeTog('star-tog', 'stars',  buildStars,  () => $('starfield').innerHTML = '');
+
+  // ── Volume slider ──
+  const volSlid = $('vol-slid');
+  const volVal  = $('vol-val');
+  const slidFill = $('slid-fill');
+  volSlid.addEventListener('input', () => {
+    S.vol = volSlid.value / 100;
+    volVal.textContent = volSlid.value;
+    slidFill.style.width = volSlid.value + '%';
+    saveSettingsToStorage();
+  });
+
+  // ── Theme cards ──
+  document.querySelectorAll('.theme-card').forEach(card => {
+    card.addEventListener('click', () => applyTheme(card.dataset.theme));
+  });
+
+  // ── Start audio on first interaction ──
+  document.addEventListener('click',   startAudio, { once: true });
+  document.addEventListener('touchstart', startAudio, { once: true });
+  document.addEventListener('keydown', startAudio, { once: true });
+
+  // ── ESC closes panel ──
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !$('cfg-overlay').classList.contains('hidden')) closeSettings();
+  });
+});
+
+</script>
+</body>
+</html>

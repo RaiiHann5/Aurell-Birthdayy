@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>COSMIC MINT</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; image-rendering:pixelated; }
+
+/* ══ DEFAULT THEME: COSMIC MINT ══ */
+:root {
+  --bg:    #0d0f1e;
+  --mint:  #7fffd4;   /* primary accent */
+  --lmint: #b0fff0;   /* light accent */
+  --lav:   #c8a8f8;   /* secondary accent */
+  --llav:  #e8d8ff;   /* light secondary */
+  --dlav:  #8060c0;   /* dark secondary */
+  --star:  #ffffc8;   /* highlight / gold */
+  --wht:   #f0f8ff;
+  --dim:   #506068;
+  --ldim:  #8898a8;
+  --dark:  #080b18;
+  --panel: #0e1228;
+  --heart: #f0a0c8;
+  --f: 'Press Start 2P', monospace;
+}
+
+/* ══ THEME: PINKY DREAM ══ */
+:root.theme-pink {
+  --bg:    #1e0d18;
+  --mint:  #ff8ec8;
+  --lmint: #ffb8e0;
+  --lav:   #f8a8d8;
+  --llav:  #ffe0f0;
+  --dlav:  #c06080;
+  --star:  #fff0c8;
+  --wht:   #fff5fa;
+  --dim:   #684858;
+  --ldim:  #a88898;
+  --dark:  #180810;
+  --panel: #28101e;
+  --heart: #ff6aaa;
+}
+
+/* ══ THEME: LAVENDER COSMOS ══ */
+:root.theme-lavender {
+  --bg:    #120d1e;
+  --mint:  #c8a8f8;
+  --lmint: #e0ccff;
+  --lav:   #a080e8;
+  --llav:  #d8c8ff;
+  --dlav:  #6040b0;
+  --star:  #f8e8ff;
+  --wht:   #f5f0ff;
+  --dim:   #584868;
+  --ldim:  #988aa8;
+  --dark:  #0c0818;
+  --panel: #1a1028;
+  --heart: #d898ff;
+}
+
+/* ══ THEME: SUNSET CORAL ══ */
+:root.theme-coral {
+  --bg:    #1e100d;
+  --mint:  #ff9a78;
+  --lmint: #ffbfa8;
+  --lav:   #f8c8a0;
+  --llav:  #ffe8d8;
+  --dlav:  #c06040;
+  --star:  #fff8c0;
+  --wht:   #fff8f5;
+  --dim:   #685048;
+  --ldim:  #a89088;
+  --dark:  #180a08;
+  --panel: #281410;
+  --heart: #ff7a5a;
+}
+
+/* ══ THEME: AQUA GALAXY ══ */
+:root.theme-aqua {
+  --bg:    #0d1a1e;
+  --mint:  #60e8ff;
+  --lmint: #a0f4ff;
+  --lav:   #80d8f0;
+  --llav:  #c8f4ff;
+  --dlav:  #3090b0;
+  --star:  #ffffc8;
+  --wht:   #f0fbff;
+  --dim:   #406068;
+  --ldim:  #78a8b8;
+  --dark:  #081418;
+  --panel: #0e2028;
+  --heart: #80d8ff;
+}
+
+html, body {
+  width:100%; height:100%; overflow:hidden;
+  background:#000; color:var(--wht);
+  font-family:var(--f); cursor:default;
+}
+
+/* CRT scanlines */
+body::before {
+  content:''; position:fixed; inset:0; z-index:9500;
+  pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,0.15) 3px,rgba(0,0,0,0.15) 4px);
+}
+body.no-scan::before { display:none; }
+
+/* LOADING SCREEN (initial) */
+#initial-loading {
+  position:fixed; inset:0; z-index:99999;
+  background:var(--bg);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:0;
+  transition:opacity .6s ease;
+}
+#initial-loading.fade-out { opacity:0; pointer-events:none; }
+
+/* scanline overlay on loader */
+#initial-loading::before {
+  content:''; position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0px,transparent 3px,rgba(0,0,0,0.15) 3px,rgba(0,0,0,0.15) 4px);
+}
+
+/* pixel border frame on loader */
+#initial-loading::after {
+  content:''; position:absolute; inset:6px;
+  border:4px solid var(--mint); pointer-events:none;
+}
+
+/* floating hearts container */
+#ld-hearts {
+  position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0;
+}
+
+#ld-content {
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; align-items:center; gap:0;
+  text-align:center;
+}
+
+/* logo */
+#ld-logo {
+  font-size:clamp(18px,4vw,48px);
+  color:var(--lmint); letter-spacing:clamp(4px,1vw,10px);
+  display:block; margin-bottom:6px;
+  animation:ldLogoShimmer 2s steps(1) infinite;
+}
+@keyframes ldLogoShimmer {
+  0%,60%,100%{ color:var(--lmint); }
+  65%         { color:var(--star); }
+  70%         { color:var(--llav); }
+  75%         { color:var(--lmint); }
+}
+
+#ld-sub {
+  font-size:clamp(7px,1.2vw,11px); color:var(--lav);
+  letter-spacing:clamp(2px,.5vw,6px); display:block;
+  margin-bottom:4px;
+}
+
+.ld-hearts-row {
+  display:block; font-size:10px; color:var(--heart);
+  letter-spacing:8px; margin:8px 0 24px;
+  animation:heartPulse 1s steps(1) infinite;
+}
+@keyframes heartPulse { 0%,49%{opacity:1} 50%,100%{opacity:.4} }
+
+/* marching sprites */
+#ld-sprites {
+  width:clamp(240px,60vw,480px);
+  height:28px; overflow:hidden; position:relative; margin-bottom:10px;
+}
+#ld-sprite-row {
+  position:absolute; top:4px; left:-120px;
+  display:flex; gap:16px; white-space:nowrap;
+  animation:ldMarch 3s linear infinite;
+}
+@keyframes ldMarch { from{left:-120px} to{left:calc(100% + 20px)} }
+.ld-sp { font-size:16px; animation:spBob .5s steps(1) infinite; }
+.ld-sp:nth-child(even){ animation-delay:.25s; }
+@keyframes spBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+/* progress bar */
+#ld-bar-wrap {
+  width:clamp(240px,60vw,480px);
+  border:3px solid var(--mint); padding:3px;
+  position:relative; background:var(--dark);
+}
+/* corner hearts */
+#ld-bar-wrap::before { content:'♥'; position:absolute; top:-9px; left:6px; font-family:var(--f); font-size:8px; color:var(--heart); background:var(--bg); padding:0 2px; }
+#ld-bar-wrap::after  { content:'♥'; position:absolute; top:-9px; right:6px; font-family:var(--f); font-size:8px; color:var(--heart); background:var(--bg); padding:0 2px; }
+
+#ld-bar {
+  height:16px; width:0%;
+  background:var(--mint);
+  position:relative; overflow:hidden;
+  transition:width .18s steps(4);
+}
+/* shimmer effect */
+#ld-bar::after {
+  content:''; position:absolute; top:0; bottom:0; left:-60%;
+  width:50%; background:rgba(255,255,255,.22);
+  animation:barShimmer 1.2s linear infinite;
+}
+@keyframes barShimmer { from{left:-60%} to{left:110%} }
+
+/* tick marks */
+#ld-ticks {
+  position:absolute; inset:3px; display:flex;
+  justify-content:space-between; pointer-events:none;
+}
+.ld-tick { width:2px; height:100%; background:rgba(0,0,0,.25); flex-shrink:0; }
+
+/* percent text */
+#ld-pct {
+  font-size:clamp(8px,1.5vw,14px);
+  color:var(--mint); letter-spacing:2px;
+  margin-top:10px; display:block;
+  min-width:60px;
+}
+
+/* status messages */
+#ld-status {
+  font-size:clamp(5px,.9vw,7px); color:var(--lav);
+  letter-spacing:2px; margin-top:8px; display:block;
+  height:12px;
+  animation:ldStatusBlink .8s steps(1) infinite;
+}
+@keyframes ldStatusBlink { 0%,79%{opacity:1} 80%,100%{opacity:.3} }
+
+/* copyright */
+#ld-copy {
+  position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
+  font-size:5px; color:var(--dim); letter-spacing:2px; white-space:nowrap;
+}
+
+/* drifting hearts */
+.hdrift {
+  position:fixed; bottom:-30px;
+  font-size:var(--fs,12px); color:var(--heart);
+  animation:hdriftUp var(--hd,8s) linear forwards;
+  opacity:0; z-index:2; pointer-events:none;
+}
+@keyframes hdriftUp {
+  0%  { transform:translateY(0) rotate(-8deg); opacity:0; }
+  10% { opacity:.5; }
+  90% { opacity:.2; }
+  100%{ transform:translateY(-108vh) rotate(8deg); opacity:0; }
+}
+
+/* LAYER 1 — background */
+#bg-layer {
+  position:fixed; inset:0; z-index:0;
+  background-color:var(--bg);
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+}
+
+/* LAYER 2 — starfield */
+#starfield {
+  position:fixed; inset:0; z-index:1;
+  pointer-events:none; overflow:hidden;
+}
+.pxstar {
+  position:absolute; width:2px; height:2px; background:var(--wht);
+  animation:twinkle var(--td,2s) steps(1) infinite; animation-delay:var(--dl,0s);
+}
+.pxstar.mint { background:var(--mint); }
+.pxstar.lav  { background:var(--lav); }
+.pxstar.gold { background:var(--star); width:3px; height:3px; }
+.pxstar.big  { width:4px; height:4px; animation:twinkleBig var(--td,3s) steps(1) infinite; animation-delay:var(--dl,0s); }
+.csstar {
+  position:absolute; font-size:var(--fs,10px); color:var(--col,#fff);
+  animation:twinkleStar var(--td,2.5s) steps(1) infinite; animation-delay:var(--dl,0s);
+  pointer-events:none; z-index:1; line-height:1;
+}
+@keyframes twinkle     { 0%,44%,56%,100%{opacity:1} 50%{opacity:0} }
+@keyframes twinkleBig  { 0%,30%,70%,100%{opacity:1} 50%{opacity:.2} }
+@keyframes twinkleStar { 0%,40%,60%,100%{opacity:.8;transform:scale(1)} 50%{opacity:.1;transform:scale(.6)} }
+
+/* LAYER 3 — drifting hearts */
+.hdrift {
+  position:fixed; bottom:-30px;
+  font-size:var(--fs,12px); color:var(--heart);
+  animation:hdriftUp var(--hd,8s) linear forwards;
+  opacity:0; z-index:2; pointer-events:none;
+}
+@keyframes hdriftUp {
+  0%  { transform:translateY(0) rotate(-8deg); opacity:0; }
+  10% { opacity:.5; }
+  90% { opacity:.2; }
+  100%{ transform:translateY(-108vh) rotate(8deg); opacity:0; }
+}
+
+/* LAYER 5 — UI screen */
+#screen {
+  position:fixed; inset:0; z-index:3;
+  display:flex; flex-direction:column; overflow:hidden;
+}
+
+/* pixel border frames */
+#frame-outer {
+  position:absolute; inset:6px; z-index:8;
+  border:4px solid var(--mint); pointer-events:none;
+}
+#frame-inner {
+  position:absolute; inset:14px; z-index:8;
+  border:2px solid var(--dlav); pointer-events:none;
+}
+#frame-outer::before, #frame-outer::after {
+  content:'♥'; position:absolute; font-family:var(--f);
+  font-size:9px; color:var(--heart); background:transparent; padding:0 3px;
+}
+#frame-outer::before { top:-7px;    left:50%; transform:translateX(-50%); }
+#frame-outer::after  { bottom:-7px; left:50%; transform:translateX(-50%); }
+
+/* HEADER */
+#header {
+  flex-shrink:0; padding:16px 26px 0;
+  display:flex; justify-content:flex-end; align-items:center;
+  position:relative; z-index:10;
+}
+#cfg-btn {
+  background:rgba(8,11,24,.88); border:2px solid var(--mint);
+  color:var(--mint); font-family:var(--f); font-size:7px;
+  padding:5px 8px; cursor:pointer;
+}
+#cfg-btn:hover { background:var(--mint); color:var(--dark); }
+
+/* TICKER */
+#ticker-wrap {
+  flex-shrink:0; border-top:3px solid var(--mint); border-bottom:3px solid var(--mint);
+  margin:10px 14px 0; overflow:hidden; height:22px;
+  display:flex; align-items:center; z-index:10; position:relative;
+  background:rgba(8,11,24,.78);
+}
+#ticker-wrap::before, #ticker-wrap::after {
+  content:'♥'; font-family:var(--f); font-size:8px;
+  color:var(--heart); flex-shrink:0; padding:0 6px;
+}
+#ticker {
+  white-space:nowrap; font-size:6px; color:var(--lav);
+  letter-spacing:3px; animation:ticker 26s linear infinite;
+  padding-left:100%; flex:1;
+}
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-200%)} }
+
+/* BODY */
+#body {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:6px 20px 0; position:relative; z-index:10;
+  overflow:hidden; gap:0;
+}
+
+/* TITLE */
+#title-wrap { text-align:center; flex-shrink:0; margin-bottom:10px; }
+.title-star {
+  display:inline-block; color:var(--star);
+  font-size:clamp(10px,1.5vw,16px);
+  animation:tstarPulse 1.5s steps(1) infinite;
+}
+@keyframes tstarPulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+#t1 {
+  font-size:clamp(13px,2.8vw,34px); letter-spacing:clamp(2px,.5vw,6px);
+  display:block; margin:4px 0; position:relative;
+}
+#t1 .c {
+  display:inline-block;
+  animation:charShimmer 3s steps(1) infinite; animation-delay:var(--cd,0s);
+}
+@keyframes charShimmer {
+  0%,70%,100%{ color:var(--lmint); }
+  75%         { color:var(--star); transform:translateY(-3px); }
+  80%         { color:var(--llav); transform:translateY(0); }
+  85%         { color:var(--lmint); }
+}
+#t2 { font-size:clamp(8px,1.5vw,16px); color:var(--lav); letter-spacing:clamp(2px,.4vw,5px); display:block; margin-top:6px; }
+.t-hearts { display:block; margin-top:7px; font-size:9px; letter-spacing:8px; color:var(--heart); animation:heartPulse 1.2s steps(1) infinite; }
+.t-sub { display:block; font-size:5px; color:var(--dim); letter-spacing:2px; margin-top:7px; }
+
+/* SEPARATOR */
+.sep { width:100%; max-width:460px; flex-shrink:0; display:flex; align-items:center; gap:6px; margin:8px 0; }
+.sep-line { flex:1; height:3px; background:var(--mint); }
+.sep-mid  { color:var(--heart); font-size:9px; flex-shrink:0; letter-spacing:4px; }
+.sep.soft .sep-line { background:var(--dlav); height:2px; }
+.sep.soft .sep-mid  { color:var(--lav); font-size:7px; }
+
+/* MENU */
+#menu { display:flex; flex-direction:column; align-items:center; gap:4px; width:100%; max-width:400px; flex-shrink:0; }
+.mbtn {
+  display:flex; align-items:center; width:100%; padding:9px 12px;
+  background:rgba(8,11,24,.82); border:2px solid var(--dim); color:var(--ldim);
+  font-family:var(--f); font-size:8px; letter-spacing:2px;
+  cursor:pointer; gap:8px; transition:none; position:relative; overflow:hidden;
+}
+.mbtn::after { content:''; position:absolute; top:0; left:-100%; width:40%; height:100%; background:rgba(127,255,212,.07); }
+.mbtn:hover::after { left:120%; transition:left .3s linear; }
+.mbtn .arr { visibility:hidden; flex-shrink:0; width:12px; font-size:8px; }
+.mbtn .lbl { flex:1; }
+.mbtn .tag { font-size:5px; border:2px solid; padding:1px 4px; }
+.mbtn:hover { border-color:var(--lav); color:var(--lav); }
+.mbtn.sel   { background:var(--mint); color:var(--dark); border-color:var(--mint); }
+.mbtn.sel .arr { visibility:visible; color:var(--dark); }
+.mbtn.sel .tag { border-color:var(--dark); color:var(--dark); }
+
+/* INSERT COIN */
+#insert { font-size:7px; color:var(--lmint); letter-spacing:3px; margin-top:9px; flex-shrink:0; animation:blink 1s steps(1) infinite; }
+@keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+
+/* FOOTER */
+#footer {
+  flex-shrink:0; border-top:3px solid var(--mint); margin:4px 14px 12px;
+  padding:6px 12px; display:flex; justify-content:space-between; align-items:center;
+  position:relative; z-index:10;
+}
+.ft { font-size:5px; color:var(--dim); letter-spacing:1px; }
+.ft-heart { color:var(--heart); }
+
+/* OVERLAY */
+.overlay {
+  position:fixed; inset:0; z-index:5000;
+  background:rgba(5,6,16,.96);
+  display:flex; align-items:center; justify-content:center;
+}
+.overlay.hidden { display:none; }
+
+/* PANEL */
+.panel {
+  width:100%; max-width:460px; background:var(--panel);
+  border:4px solid var(--mint); outline:2px solid var(--dark);
+  font-family:var(--f); max-height:92vh; overflow:hidden;
+  display:flex; flex-direction:column; margin:12px;
+  animation:panelIn .08s steps(1); position:relative;
+}
+.panel::before, .panel::after {
+  content:'♥'; position:absolute; font-family:var(--f);
+  font-size:8px; color:var(--heart); background:var(--panel); padding:0 3px; z-index:1;
+}
+.panel::before { top:-7px; right:12px; }
+.panel::after  { bottom:-7px; right:12px; }
+@keyframes panelIn { from{transform:scaleY(.1) scaleX(.95);opacity:0} to{transform:scaleY(1) scaleX(1);opacity:1} }
+
+.panel-hdr {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 14px; border-bottom:3px solid var(--mint);
+  background:rgba(8,11,24,.92); flex-shrink:0;
+}
+.panel-title { font-size:8px; color:var(--mint); letter-spacing:2px; }
+.close-btn {
+  background:var(--dark); border:2px solid var(--heart);
+  color:var(--heart); font-family:var(--f); font-size:8px; padding:3px 7px; cursor:pointer;
+}
+.close-btn:hover { background:var(--heart); color:var(--dark); }
+
+.panel-body {
+  overflow-y:auto; flex:1; padding:14px 16px;
+  scrollbar-width:thin; scrollbar-color:var(--mint) var(--dark);
+}
+.panel-body::-webkit-scrollbar { width:6px; }
+.panel-body::-webkit-scrollbar-thumb { background:var(--mint); }
+.panel-body::-webkit-scrollbar-track { background:var(--dark); }
+
+.p-sec { margin-bottom:18px; }
+.p-sec-lbl { font-size:5px; color:var(--lav); letter-spacing:2px; display:block; margin-bottom:10px; border-bottom:2px solid var(--dim); padding-bottom:5px; }
+.p-row { display:flex; align-items:center; gap:12px; margin-bottom:9px; font-size:6px; }
+.p-lbl { color:var(--ldim); min-width:90px; flex-shrink:0; }
+
+.tog { background:var(--dark); border:2px solid var(--dim); color:var(--dim); font-family:var(--f); font-size:6px; padding:5px 12px; cursor:pointer; letter-spacing:1px; }
+.tog.on   { border-color:var(--mint); color:var(--mint); }
+.tog:hover{ border-color:var(--lav);  color:var(--lav); }
+
+/* SLIDER */
+.slid-wrap  { display:flex; align-items:center; gap:8px; flex:1; }
+.slid-track { flex:1; height:12px; background:var(--dark); border:2px solid var(--dim); position:relative; }
+.slid-fill  { position:absolute; left:0; top:0; height:100%; background:var(--mint); pointer-events:none; z-index:1; opacity:.6; }
+input[type=range] {
+  -webkit-appearance:none; appearance:none; position:relative; z-index:2;
+  width:100%; height:100%; background:transparent; cursor:pointer; margin:0; padding:0;
+}
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:16px; background:var(--lav); border:2px solid var(--llav); cursor:pointer; }
+input[type=range]::-moz-range-thumb    { width:12px; height:16px; background:var(--lav); border:2px solid var(--llav); cursor:pointer; border-radius:0; }
+.slid-val { font-size:6px; color:var(--mint); min-width:26px; text-align:right; }
+
+/* SWATCHES */
+.swatches { display:flex; gap:5px; }
+.sw { width:20px; height:20px; border:2px solid var(--dim); cursor:pointer; }
+.sw:hover, .sw.on { border:3px solid var(--mint); }
+
+/* FILE */
+.file-row { display:flex; gap:8px; flex-wrap:wrap; }
+.file-btn { background:var(--dark); border:2px solid var(--lav); color:var(--lav); font-family:var(--f); font-size:5px; padding:5px 8px; cursor:pointer; letter-spacing:1px; }
+.file-btn:hover { background:var(--lav); color:var(--dark); }
+
+/* THEME GRID */
+.theme-grid {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:6px;
+  width:100%;
+}
+.theme-card {
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  background:var(--dark); border:2px solid var(--dim);
+  padding:6px 4px; cursor:pointer;
+  font-family:var(--f); transition:none; position:relative;
+}
+.theme-card:hover { border-color:var(--ldim); }
+.theme-card.on {
+  border-color:var(--mint);
+  background:rgba(127,255,212,.08);
+}
+.theme-card.on::after {
+  content:'✦'; position:absolute; top:-7px; right:-5px;
+  font-size:7px; color:var(--mint); background:var(--panel); padding:0 1px;
+}
+.tc-preview {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:2px; width:28px; height:18px;
+}
+.tc-preview span { display:block; width:100%; height:100%; }
+.tc-name { font-size:4px; color:var(--ldim); letter-spacing:1px; text-align:center; line-height:1.4; }
+.theme-card.on .tc-name { color:var(--mint); }
+
+.panel-ftr { border-top:3px solid var(--mint); padding:10px 14px; text-align:center; flex-shrink:0; background:var(--dark); }
+
+/* CREDITS panel */
+.cred-panel { max-width:400px; }
+.cred-body {
+  overflow-y:auto; flex:1; padding:18px 16px;
+  scrollbar-width:thin; scrollbar-color:var(--lav) var(--dark);
+}
+.cred-body::-webkit-scrollbar { width:6px; }
+.cred-body::-webkit-scrollbar-thumb { background:var(--lav); }
+.cred-body::-webkit-scrollbar-track { background:var(--dark); }
+.cred-line {
+  display:block; text-align:center;
+  font-size:6px; letter-spacing:2px; line-height:2.8;
+  opacity:0; transform:translateY(8px);
+  transition:opacity .3s ease, transform .3s ease;
+}
+.cred-line.show { opacity:1; transform:translateY(0); }
+.cred-line.cm { color:var(--mint);  font-size:5px; margin-top:4px; }
+.cred-line.cl { color:var(--lav); }
+.cred-line.ch { color:var(--heart); animation:heartPulse 1s steps(1) infinite; }
+.cred-line.cw { color:var(--wht); }
+.cred-line.cd { color:var(--ldim); font-size:5px; }
+.cred-line.gap{ line-height:.8; font-size:4px; opacity:1 !important; transform:none !important; }
+
+/* JUKEBOX */
+.eq-bar {
+  width:5px; height:var(--h,50%);
+  background:var(--mint);
+  animation:eqBounce .4s steps(3) infinite alternate;
+}
+@keyframes eqBounce { from{height:var(--h)} to{height:calc(var(--h) * .25)} }
+.eq-bar:nth-child(even) { animation-delay:.12s; background:var(--lav); animation-duration:.42s; }
+.eq-bar:nth-child(3)    { animation-duration:.38s; }
+.eq-bar:nth-child(5)    { animation-duration:.55s; }
+.eq-bar:nth-child(7)    { animation-duration:.48s; animation-delay:.08s; }
+#jk-eq.paused .eq-bar  { animation-play-state:paused; }
+
+.jk-track {
+  display:flex; align-items:center; gap:8px;
+  padding:7px 10px; margin-bottom:4px;
+  border:2px solid var(--dim); cursor:pointer;
+  font-family:var(--f); font-size:6px; letter-spacing:1px; color:var(--ldim);
+  background:var(--dark);
+}
+.jk-track:hover { border-color:var(--lav); color:var(--lav); }
+.jk-track.active{ border-color:var(--mint); color:var(--mint); background:rgba(127,255,212,.06); }
+.jk-track .jk-num { min-width:14px; color:var(--dim); flex-shrink:0; }
+.jk-track .jk-nm  { flex:1; }
+.jk-track .jk-dur { color:var(--dim); font-size:5px; flex-shrink:0; }
+.jk-track.active .jk-num { color:var(--mint); }
+
+.jk-ctrl {
+  background:var(--dark); border:2px solid var(--mint); color:var(--mint);
+  font-family:var(--f); font-size:8px; padding:7px 12px; cursor:pointer; letter-spacing:1px;
+}
+.jk-ctrl:hover     { background:var(--mint); color:var(--dark); }
+.jk-loop-btn       { border-color:var(--dim); color:var(--dim); font-size:6px; }
+.jk-loop-btn.active{ border-color:var(--lav); color:var(--lav); }
+
+/* RESPONSIVE */
+@media(max-width:560px){
+  #t1{font-size:11px} #t2{font-size:7px} .mbtn{font-size:6px;padding:8px 10px} #header{padding:10px 14px 0}
+}
+@media(max-width:380px){
+  #t1{font-size:9px;letter-spacing:2px} .mbtn{font-size:5px}
+}
+</style>
+</head>
+<body>
+<!-- INITIAL LOADING SCREEN -->
+<div id="initial-loading">
+  <div id="ld-hearts"></div>
+  <div id="ld-content">
+    <span id="ld-logo">HAPPY BIRTHDAY!</span>
+    <span id="ld-sub">♥INI HADIAH ULTAH KAMU YAA♥</span>
+    <span class="ld-hearts-row">♥ &nbsp; ♥ &nbsp; ♥</span>
+    <div id="ld-sprites">
+      <div id="ld-sprite-row">
+        <span class="ld-sp">🩷</span>
+        <span class="ld-sp">💘</span>
+        <span class="ld-sp">💗</span>
+        <span class="ld-sp">💞</span>
+        <span class="ld-sp">💗</span>
+        <span class="ld-sp">💖</span>
+      </div>
+    </div>
+    <div id="ld-bar-wrap">
+      <div id="ld-ticks"></div>
+      <div id="ld-bar"></div>
+    </div>
+    <span id="ld-pct">0%</span>
+    <span id="ld-status">SABAR DIKIT YH...</span>
+  </div>
+  <span id="ld-copy">© 2026 PUNYANYA PACAR AUREL. YANG NGAMBIL GW GEBUK</span>
+</div>
+
+<!-- LAYER 1: BG -->
+<div id="bg-layer"></div>
+
+<!-- LAYER 2: stars -->
+<div id="starfield"></div>
+
+<!-- LAYER 5: UI -->
+<div id="screen">
+  <div id="frame-outer"></div>
+  <div id="frame-inner"></div>
+
+  <!-- HEADER -->
+  <div id="header">
+    <button id="cfg-btn">✦ CFG</button>
+  </div>
+
+  <!-- TICKER -->
+  <div id="ticker-wrap">
+    <span id="ticker">
+      ✦ BIRTHDAY AUYEL ♥ INSERT COIN ✦ PRESS START ♥ CEWE GW CANTIK BGT ✦
+      NIKAH YUK AUREL ♥ BIRTHDAYNYA CEWE REI ✦ INSERT COIN ♥ PRESS START ✦
+      © 2026 PUNYA NYA REI ♥ AUREL TUH PUNYA RAIHAN ✦
+      &nbsp;&nbsp;
+    </span>
+  </div>
+
+  <!-- BODY -->
+  <div id="body">
+    <div id="title-wrap">
+      <span id="t1">
+        <span class="title-star">✦</span>
+        <span class="c" style="--cd:0s">A</span><span class="c" style="--cd:.12s">U</span><span class="c" style="--cd:.24s">R</span><span class="c" style="--cd:.36s">E</span><span class="c" style="--cd:.48s">L</span><span class="c" style="--cd:.6s">L</span>
+        <span style="display:inline-block;width:clamp(6px,1vw,14px)"> </span>
+        <span class="c" style="--cd:.72s">B</span><span class="c" style="--cd:.84s">I</span><span class="c" style="--cd:.96s">R</span><span class="c" style="--cd:1.08s">T</span><span class="c" style="--cd:1.08s">H</span><span class="c" style="--cd:1.08s">D</span><span class="c" style="--cd:1.08s">A</span><span class="c" style="--cd:1.08s">Y</span>
+        <span class="title-star" style="animation-delay:.5s">✦</span>
+      </span>
+      <span id="t2">♥ AURELLL BIRTHDAYY ♥</span>
+      <span class="t-hearts">♥ &nbsp; ♥ &nbsp; ♥</span>
+      <span class="t-sub">© 2026 PUNYANYA PACAR AUREL. PACAR AUREL TUH RAIHAN </span>
+    </div>
+
+    <div class="sep">
+      <div class="sep-line"></div>
+      <span class="sep-mid">♥ ✦ ♥</span>
+      <div class="sep-line"></div>
+    </div>
+
+    <div id="menu">
+      <button class="mbtn" data-i="0" id="start-game">
+        <span class="arr">►</span>
+        <span class="lbl">START</span>
+        <span class="tag" style="color:var(--star);border-color:var(--star)">✦GO</span>
+      </button>
+      <button class="mbtn" data-i="1" id="open-jukebox">
+        <span class="arr">►</span>
+        <span class="lbl">JUKEBOX</span>
+        <span class="tag" style="color:var(--lav);border-color:var(--lav)">♪</span>
+      </button>
+      <button class="mbtn" data-i="2" id="open-cfg">
+        <span class="arr">►</span>
+        <span class="lbl">SETTINGS</span>
+        <span class="tag" style="color:var(--lav);border-color:var(--lav)">♥</span>
+      </button>
+      <button class="mbtn" data-i="3" id="open-cred">
+        <span class="arr">►</span>
+        <span class="lbl">CREDITS</span>
+      </button>
+    </div>
+
+    <div id="insert">♥ INSERT COIN ♥</div>
+
+    <div class="sep soft" style="margin-top:8px">
+      <div class="sep-line"></div>
+      <span class="sep-mid">✦ ✦ ✦</span>
+      <div class="sep-line"></div>
+    </div>
+  </div><!-- /body -->
+
+  <div id="footer">
+    <span class="ft">↑↓ SELECT <span class="ft-heart">♥</span> ENTER OK <span class="ft-heart">♥</span> ESC BACK</span>
+    <span class="ft">PACARNYA AUREL ITU RAIHANNN</span>
+  </div>
+</div><!-- /screen -->
+
+<!-- SETTINGS OVERLAY -->
+<div class="overlay hidden" id="cfg-overlay">
+  <div class="panel">
+    <div class="panel-hdr">
+      <span class="panel-title">♥ SETTINGS ✦</span>
+      <button class="close-btn" id="close-cfg">✕</button>
+    </div>
+    <div class="panel-body">
+      <!-- THEME PICKER -->
+      <div class="p-sec">
+        <span class="p-sec-lbl">✦ COLOR THEME ✦</span>
+        <div class="theme-grid" id="theme-grid">
+          <button class="theme-card on" data-theme="" data-bg="#0d0f1e">
+            <div class="tc-preview">
+              <span style="background:#7fffd4"></span>
+              <span style="background:#c8a8f8"></span>
+              <span style="background:#f0a0c8"></span>
+              <span style="background:#ffffc8"></span>
+            </div>
+            <span class="tc-name">MINT</span>
+          </button>
+          <button class="theme-card" data-theme="theme-pink" data-bg="#1e0d18">
+            <div class="tc-preview">
+              <span style="background:#ff8ec8"></span>
+              <span style="background:#f8a8d8"></span>
+              <span style="background:#ff6aaa"></span>
+              <span style="background:#fff0c8"></span>
+            </div>
+            <span class="tc-name">PINKY</span>
+          </button>
+          <button class="theme-card" data-theme="theme-lavender" data-bg="#120d1e">
+            <div class="tc-preview">
+              <span style="background:#c8a8f8"></span>
+              <span style="background:#a080e8"></span>
+              <span style="background:#d898ff"></span>
+              <span style="background:#f8e8ff"></span>
+            </div>
+            <span class="tc-name">LAVENDER</span>
+          </button>
+          <button class="theme-card" data-theme="theme-coral" data-bg="#1e100d">
+            <div class="tc-preview">
+              <span style="background:#ff9a78"></span>
+              <span style="background:#f8c8a0"></span>
+              <span style="background:#ff7a5a"></span>
+              <span style="background:#fff8c0"></span>
+            </div>
+            <span class="tc-name">CORAL</span>
+          </button>
+          <button class="theme-card" data-theme="theme-aqua" data-bg="#0d1a1e">
+            <div class="tc-preview">
+              <span style="background:#60e8ff"></span>
+              <span style="background:#80d8f0"></span>
+              <span style="background:#80d8ff"></span>
+              <span style="background:#ffffc8"></span>
+            </div>
+            <span class="tc-name">AQUA</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-sec">
+        <span class="p-sec-lbl">✦ AUDIO ✦</span>
+        <div class="p-row"><span class="p-lbl">BGM</span><button class="tog on" id="bgm-tog">ON</button></div>
+        <div class="p-row"><span class="p-lbl">SFX</span><button class="tog on" id="sfx-tog">ON</button></div>
+        <div class="p-row">
+          <span class="p-lbl">VOLUME</span>
+          <div class="slid-wrap">
+            <div class="slid-track">
+              <div class="slid-fill" id="slid-fill" style="width:40%"></div>
+              <input type="range" id="vol-slid" min="0" max="100" value="40"/>
+            </div>
+            <span class="slid-val" id="vol-val">40</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-sec">
+        <span class="p-sec-lbl">♥ DISPLAY ♥</span>
+        <div class="p-row"><span class="p-lbl">SCANLINES</span><button class="tog on" id="scan-tog">ON</button></div>
+        <div class="p-row"><span class="p-lbl">HEARTS ♥</span><button class="tog on" id="hrt-tog">ON</button></div>
+        <div class="p-row"><span class="p-lbl">PIXEL STARS</span><button class="tog on" id="star-tog">ON</button></div>
+        <div class="p-row">
+          <span class="p-lbl">BG COLOR</span>
+          <div class="swatches">
+            <div class="sw on" data-c="#0d0f1e" style="background:#0d0f1e"></div>
+            <div class="sw"    data-c="#0a1020" style="background:#0a1020"></div>
+            <div class="sw"    data-c="#100c20" style="background:#100c20"></div>
+            <div class="sw"    data-c="#0a1810" style="background:#0a1810"></div>
+            <div class="sw"    data-c="#000000" style="background:#000000"></div>
+          </div>
+        </div>
+        <div class="p-row">
+          <span class="p-lbl">BG IMAGE</span>
+          <div class="file-row">
+            <label class="file-btn" for="bg-upload">♥ LOAD</label>
+            <input type="file" id="bg-upload" accept="image/*" style="display:none"/>
+            <button class="file-btn" id="clear-bg">✦ CLEAR</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-sec">
+        <span class="p-sec-lbl">✦ EFFECTS ✦</span>
+        <div class="p-row"><span class="p-lbl">TITLE SPARKLE</span><button class="tog on" id="spk-tog">ON</button></div>
+        <div class="p-row"><span class="p-lbl">TITLE BLINK</span><button class="tog on" id="flk-tog">ON</button></div>
+        <div class="p-row"><span class="p-lbl">PARALLAX</span><button class="tog on" id="par-tog">ON</button></div>
+      </div>
+    </div>
+    <div class="panel-ftr">
+      <button class="mbtn" style="width:auto;padding:8px 20px;font-size:7px;display:inline-flex" id="apply-cfg">► APPLY ♥ CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- JUKEBOX OVERLAY -->
+<div class="overlay hidden" id="jukebox-overlay">
+  <div class="panel" style="max-width:400px">
+    <div class="panel-hdr">
+      <span class="panel-title">♪ JUKEBOX ✦</span>
+      <button class="close-btn" id="close-jukebox">✕</button>
+    </div>
+    <div class="panel-body" style="padding:20px 18px">
+      <div style="text-align:center;margin-bottom:18px">
+        <span style="font-size:5px;color:var(--ldim);letter-spacing:2px;display:block;margin-bottom:8px">♪ NOW PLAYING ♪</span>
+        <span id="jk-title" style="font-size:8px;color:var(--mint);letter-spacing:2px;display:block;margin-bottom:4px">LAGU PIXEL ANJAI</span>
+        <span id="jk-artist" style="font-size:6px;color:var(--lav);letter-spacing:2px;display:block">MOMO BAND</span>
+        <div id="jk-eq" style="display:flex;align-items:flex-end;justify-content:center;gap:3px;height:24px;margin-top:10px">
+          <div class="eq-bar" style="--h:60%"></div>
+          <div class="eq-bar" style="--h:90%"></div>
+          <div class="eq-bar" style="--h:40%"></div>
+          <div class="eq-bar" style="--h:75%"></div>
+          <div class="eq-bar" style="--h:55%"></div>
+          <div class="eq-bar" style="--h:85%"></div>
+          <div class="eq-bar" style="--h:45%"></div>
+          <div class="eq-bar" style="--h:70%"></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <span style="font-size:5px;color:var(--lav);letter-spacing:2px;display:block;margin-bottom:8px;border-bottom:2px solid var(--dim);padding-bottom:4px">✦ TRACK LIST ✦</span>
+        <div id="jk-tracks"></div>
+      </div>
+
+      <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">
+        <button class="jk-ctrl" id="jk-prev">◄◄</button>
+        <button class="jk-ctrl" id="jk-play" style="min-width:60px">▐▐</button>
+        <button class="jk-ctrl" id="jk-next">►►</button>
+        <button class="jk-ctrl jk-loop-btn" id="jk-loop">↺ LOOP</button>
+      </div>
+
+      <div class="p-row" style="margin-top:14px">
+        <span class="p-lbl" style="font-size:6px">VOLUME</span>
+        <div class="slid-wrap">
+          <div class="slid-track">
+            <div class="slid-fill" id="jk-slid-fill" style="width:40%"></div>
+            <input type="range" id="jk-vol" min="0" max="100" value="40"/>
+          </div>
+          <span class="slid-val" id="jk-vol-val">40</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CREDITS OVERLAY -->
+<div class="overlay hidden" id="cred-overlay">
+  <div class="panel cred-panel">
+    <div class="panel-hdr">
+      <span class="panel-title">♥ CREDITS ✦</span>
+      <button class="close-btn" id="close-cred">✕</button>
+    </div>
+    <div class="cred-body" id="cred-body"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ─── STATE ─── */
+const S = {
+  bgmOn: true, sfxOn: true, vol: 0.4,
+  scan: true, hearts: true, stars: true,
+  sparkle: true, flicker: true, parallax: true,
+  bgColor: '#0d0f1e', bgImage: null, sel: 0,
+  themeClass: '', bgCustomColor: false,
+  audioCtx: null, bgmTick: null,
+};
+
+const $  = id => document.getElementById(id);
+const QA = s  => document.querySelectorAll(s);
+
+const el = {
+  bgLayer:  $('bg-layer'),
+  sf:       $('starfield'),
+  screen:   $('screen'),
+  t1:       $('t1'),
+  tChars:   QA('#t1 .c'),
+  cfgBtn:   $('cfg-btn'),
+  cfgOv:    $('cfg-overlay'),
+  closeCfg: $('close-cfg'),
+  openCfg:  $('open-cfg'),
+  credOv:   $('cred-overlay'),
+  openCred: $('open-cred'),
+  closeCred:$('close-cred'),
+  credBody: $('cred-body'),
+  applyCfg: $('apply-cfg'),
+  bgmTog:   $('bgm-tog'),
+  sfxTog:   $('sfx-tog'),
+  volSlid:  $('vol-slid'),
+  volVal:   $('vol-val'),
+  slidFill: $('slid-fill'),
+  scanTog:  $('scan-tog'),
+  hrtTog:   $('hrt-tog'),
+  starTog:  $('star-tog'),
+  spkTog:   $('spk-tog'),
+  flkTog:   $('flk-tog'),
+  parTog:   $('par-tog'),
+  swatches: QA('.sw'),
+  bgUpload: $('bg-upload'),
+  clearBg:  $('clear-bg'),
+  mbbtns:   QA('#menu .mbtn'),
+  startBtn: $('start-game'),
+  initialLoading: $('initial-loading'),
+};
+
+/* ─── SAVE THEME TO LOCALSTORAGE ─── */
+function saveThemeToStorage() {
+  localStorage.setItem('cosmic-mint-theme', S.themeClass);
+  localStorage.setItem('cosmic-mint-bgColor', S.bgColor);
+}
+
+/* ─── LOAD THEME FROM LOCALSTORAGE ─── */
+function loadThemeFromStorage() {
+  const savedTheme = localStorage.getItem('cosmic-mint-theme');
+  const savedBgColor = localStorage.getItem('cosmic-mint-bgColor');
+  
+  if (savedTheme !== null) {
+    applyTheme(savedTheme, false);
+  }
+  if (savedBgColor !== null && savedBgColor !== S.bgColor) {
+    S.bgColor = savedBgColor;
+    S.bgCustomColor = true;
+    applyBg();
+    
+    el.swatches.forEach(sw => {
+      sw.classList.toggle('on', sw.dataset.c === savedBgColor);
+    });
+  }
+}
+
+/* ─── APPLY BG ─── */
+function applyBg() {
+  el.bgLayer.style.backgroundColor = S.bgColor;
+  el.bgLayer.style.backgroundImage = S.bgImage ? `url(${S.bgImage})` : 'none';
+}
+
+/* ─── PIXEL STAR FIELD ─── */
+function buildStars() {
+  el.sf.innerHTML = '';
+  if (!S.stars) return;
+  const types=[{cls:'',n:60},{cls:'mint',n:25},{cls:'lav',n:25},{cls:'gold',n:15},{cls:'big',n:8}];
+  types.forEach(({cls,n})=>{
+    for(let i=0;i<n;i++){
+      const d=document.createElement('div');
+      d.className='pxstar'+(cls?' '+cls:'');
+      d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;--td:${1+Math.random()*3.5}s;--dl:${Math.random()*4}s`;
+      el.sf.appendChild(d);
+    }
+  });
+  const syms=['✦','✦','★','✧','✦'];
+  const cols=['var(--star)','var(--mint)','var(--lav)','var(--lmint)','var(--llav)'];
+  for(let i=0;i<40;i++){
+    const d=document.createElement('div');
+    d.className='csstar';
+    d.textContent=syms[Math.floor(Math.random()*syms.length)];
+    d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;--fs:${8+Math.random()*10}px;--col:${cols[Math.floor(Math.random()*cols.length)]};--td:${1.5+Math.random()*4}s;--dl:${Math.random()*4}s`;
+    el.sf.appendChild(d);
+  }
+}
+
+/* ─── DRIFTING HEARTS ─── */
+let heartTimer;
+const HSYMS=['♥','♥','♥','✦','♥'];
+function spawnHeart(){
+  if(!S.hearts) return;
+  const h=document.createElement('div');
+  h.className='hdrift';
+  h.textContent=HSYMS[Math.floor(Math.random()*HSYMS.length)];
+  const dur=7+Math.random()*9;
+  h.style.cssText=`left:${4+Math.random()*92}%;--hd:${dur}s;--fs:${9+Math.random()*9}px`;
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),(dur+.5)*1000);
+}
+function startHearts(){ heartTimer=setInterval(spawnHeart,1300); }
+function stopHearts() { clearInterval(heartTimer); QA('.hdrift').forEach(h=>h.remove()); }
+
+/* ─── AUDIO ─── */
+function actx(){
+  if(!S.audioCtx) S.audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return S.audioCtx;
+}
+function tone(f,t,d,v=0.22){
+  if(!S.sfxOn) return;
+  try{
+    const c=actx(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);
+    o.type=t;o.frequency.value=f;
+    g.gain.setValueAtTime(v*S.vol*2.2,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);
+    o.start();o.stop(c.currentTime+d);
+  }catch(e){}
+}
+const SFX={
+  hover:()=>tone(587,'square',.05,.1),
+  sel:  ()=>{tone(784,'square',.07);setTimeout(()=>tone(988,'square',.07),50);},
+  open: ()=>{tone(523,'square',.1);setTimeout(()=>tone(784,'square',.1),70);},
+  close:()=>tone(392,'square',.1),
+  tog:  ()=>tone(659,'square',.06),
+  nav:  ()=>tone(494,'square',.04,.1),
+};
+const sfx=n=>S.sfxOn&&SFX[n]&&SFX[n]();
+
+/* ─── BGM ─── */
+const SONG=[
+  [784,.18],[880,.18],[988,.18],[1047,.36],[880,.18],[784,.36],
+  [659,.18],[784,.18],[880,.18],[988,.36],[880,.18],[784,.36],
+  [988,.18],[1047,.18],[1175,.18],[1319,.36],[1175,.18],[988,.36],
+  [880,.18],[988,.18],[1047,.18],[1175,.36],[988,.18],[880,.54],
+  [784,.18],[880,.18],[988,.18],[1047,.18],[880,.18],[784,.18],[659,.54],
+];
+let mIdx=0;
+function scheduleSong(){
+  if(!S.bgmOn||!S.audioCtx) return;
+  const[f,d]=SONG[mIdx++%SONG.length];
+  try{
+    const c=actx(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);
+    o.type='square';o.frequency.value=f;
+    g.gain.setValueAtTime(.06*S.vol,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d*.82);
+    o.start();o.stop(c.currentTime+d);
+    S.bgmTick=setTimeout(scheduleSong,d*1000+8);
+  }catch(e){}
+}
+function startBGM(){clearTimeout(S.bgmTick);try{actx().resume();}catch(e){}mIdx=0;scheduleSong();}
+function stopBGM() {clearTimeout(S.bgmTick);S.bgmTick=null;}
+
+/* ─── MENU NAV ─── */
+function updateSel(){ el.mbbtns.forEach((b,i)=>b.classList.toggle('sel',i===S.sel)); }
+document.addEventListener('keydown',e=>{
+  const co=!el.cfgOv.classList.contains('hidden');
+  const cr=!el.credOv.classList.contains('hidden');
+  const cj=!$('jukebox-overlay').classList.contains('hidden');
+  if(e.key==='Escape'){
+    if(co){el.cfgOv.classList.add('hidden');sfx('close');}
+    if(cr){el.credOv.classList.add('hidden');sfx('close');}
+    if(cj){closeJukebox();}
+    return;
+  }
+  if(co||cr||cj) return;
+  if(e.key==='ArrowUp')  {e.preventDefault();S.sel=(S.sel-1+4)%4;updateSel();sfx('nav');}
+  if(e.key==='ArrowDown'){e.preventDefault();S.sel=(S.sel+1)%4;  updateSel();sfx('nav');}
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();el.mbbtns[S.sel].click();}
+});
+el.mbbtns.forEach((b,i)=>{
+  b.addEventListener('mouseenter',()=>{S.sel=i;updateSel();sfx('hover');});
+  b.addEventListener('click',()=>{
+    sfx('sel');
+    if(i===0) startGame();
+    if(i===1) openJukebox();
+    if(i===2) openCfg();
+    if(i===3) openCred();
+  });
+});
+
+/* ─── INITIAL LOADING SCREEN ─── */
+function initInitialLoading() {
+  const ldBar = document.querySelector('#initial-loading #ld-bar');
+  const ldPct = document.querySelector('#initial-loading #ld-pct');
+  const ldStatus = document.querySelector('#initial-loading #ld-status');
+  const ldHearts = document.querySelector('#initial-loading #ld-hearts');
+  const ldTicks = document.querySelector('#initial-loading #ld-ticks');
+
+  // build tick marks
+  for(let i=0;i<9;i++){
+    const t=document.createElement('div');
+    t.className='ld-tick';
+    ldTicks.appendChild(t);
+  }
+
+  // drifting hearts
+  const LHSYMS=['♥','♥','✦','♥'];
+  function spawnLdHeart(){
+    const h=document.createElement('div');
+    h.className='hdrift';
+    h.textContent=LHSYMS[Math.floor(Math.random()*LHSYMS.length)];
+    const dur=6+Math.random()*8;
+    h.style.cssText=`left:${4+Math.random()*92}%;--hd:${dur}s;--fs:${8+Math.random()*10}px;z-index:0`;
+    ldHearts.appendChild(h);
+    setTimeout(()=>h.remove(),(dur+.5)*1000);
+  }
+  spawnLdHeart();
+  const ldHrtTimer=setInterval(spawnLdHeart,1600);
+
+  const MSGS=[
+    [0,  'EHH MASIH 0'],
+    [10, 'SABARRR MASI LAMA'],
+    [20, 'SABARR SAYANGGG ♥'],
+    [35, 'NAHH GITU DONG SABARR YA CANTIKK...'],
+    [50, 'ANJIM MAKIN CANTIK...'],
+    [65, 'MAKIN CINTA AK SM AUREL...'],
+    [78, 'BNTR SAYANG DIKIT LAGIII...'],
+    [88, 'YAELAHH...'],
+    [95, 'DIKIT BANGETT LAGII NIII ♥'],
+    [100,'YEAYYYYYYY!'],
+  ];
+
+  let pct = 0;
+  let stepIdx = 0;
+
+  const STEPS=[
+    {target:10, delay:320},
+    {target:20, delay:260},
+    {target:35, delay:190},
+    {target:50, delay:140},
+    {target:65, delay:150},
+    {target:78, delay:200},
+    {target:88, delay:250},
+    {target:95, delay:300},
+    {target:100,delay:280},
+  ];
+
+  function updateMsg(p){
+    for(let i=MSGS.length-1;i>=0;i--){
+      if(p>=MSGS[i][0]){ ldStatus.textContent=MSGS[i][1]; break; }
+    }
+  }
+
+  function tick(){
+    if(stepIdx>=STEPS.length){ finish(); return; }
+    const {target,delay}=STEPS[stepIdx];
+    const increment = Math.max(1, Math.ceil((target-pct)/3));
+    pct=Math.min(pct+increment, target);
+
+    ldBar.style.width=pct+'%';
+    ldPct.textContent=pct+'%';
+    updateMsg(pct);
+
+    if(pct>=target){
+      stepIdx++;
+      setTimeout(tick, delay);
+    } else {
+      setTimeout(tick, delay/3);
+    }
+  }
+
+  function finish(){
+    clearInterval(ldHrtTimer);
+    setTimeout(()=>{
+      el.initialLoading.classList.add('fade-out');
+      setTimeout(()=>{
+        el.initialLoading.style.display = 'none';
+        // Start BGM after initial loading
+        if(S.bgmOn) startBGM();
+      }, 650);
+    }, 500);
+  }
+
+  setTimeout(tick, 400);
+}
+
+/* ─── START GAME (second loading) ─── */
+function startGame(){
+  // Simpan theme ke localStorage
+  saveThemeToStorage();
+  
+  // Flash effect
+  const THEMES = {
+    '':             { bg:'#0d0f1e', flash:'#1a3028' },
+    'theme-pink':   { bg:'#1e0d18', flash:'#2a1020' },
+    'theme-lavender':{ bg:'#120d1e', flash:'#1e1030' },
+    'theme-coral':  { bg:'#1e100d', flash:'#2a1808' },
+    'theme-aqua':   { bg:'#0d1a1e', flash:'#0a2830' },
+  };
+  
+  let n=0;
+  const flashCol = (THEMES[S.themeClass] || THEMES['']).flash;
+  const t=setInterval(()=>{
+    el.bgLayer.style.backgroundColor=n++%2?S.bgColor:flashCol;
+    if(n>5){
+      clearInterval(t);
+      el.bgLayer.style.backgroundColor=S.bgColor;
+      // Redirect ke loading screen kedua (atau langsung ke game)
+      // Untuk demo, kita pakai loading.html yang sudah dibuat sebelumnya
+      window.location.href = 'loading.html';
+    }
+  },70);
+}
+
+/* ─── THEME SWITCHER ─── */
+const THEMES = {
+  '':             { bg:'#0d0f1e', flash:'#1a3028' },
+  'theme-pink':   { bg:'#1e0d18', flash:'#2a1020' },
+  'theme-lavender':{ bg:'#120d1e', flash:'#1e1030' },
+  'theme-coral':  { bg:'#1e100d', flash:'#2a1808' },
+  'theme-aqua':   { bg:'#0d1a1e', flash:'#0a2830' },
+};
+const ALL_THEMES = Object.keys(THEMES);
+
+function applyTheme(themeClass, saveToStorage = true) {
+  ALL_THEMES.filter(t=>t).forEach(t=>document.documentElement.classList.remove(t));
+  if (themeClass) document.documentElement.classList.add(themeClass);
+
+  S.themeClass = themeClass;
+  const theme = THEMES[themeClass] || THEMES[''];
+
+  if (!S.bgCustomColor) {
+    S.bgColor = theme.bg;
+    applyBg();
+    el.swatches.forEach(sw => sw.classList.remove('on'));
+    el.swatches[0] && el.swatches[0].classList.add('on');
+  }
+
+  if (S.stars) buildStars();
+
+  document.querySelectorAll('.theme-card').forEach(c=>{
+    c.classList.toggle('on', c.dataset.theme === themeClass);
+  });
+
+  if (saveToStorage) {
+    saveThemeToStorage();
+  }
+
+  sfx('tog');
+}
+
+document.getElementById('theme-grid').addEventListener('click', e=>{
+  const card = e.target.closest('.theme-card');
+  if (!card) return;
+  S.bgCustomColor = false;
+  applyTheme(card.dataset.theme);
+});
+
+/* ─── JUKEBOX ─── */
+const TRACKS = [
+  { name:'MEOW MEOW',    artist:'MOMO BAND',   dur:'1:24', song: [
+    [784,.18],[880,.18],[988,.18],[1047,.36],[880,.18],[784,.36],
+    [659,.18],[784,.18],[880,.18],[988,.36],[880,.18],[784,.36],
+    [988,.18],[1047,.18],[1175,.18],[1319,.36],[1175,.18],[988,.36],
+    [880,.18],[988,.18],[1047,.18],[1175,.36],[988,.18],[880,.54],
+    [784,.18],[880,.18],[988,.18],[1047,.18],[880,.18],[784,.18],[659,.54],
+  ]},
+  { name:'MIAAWWW',      artist:'JAWIR HEARTS',      dur:'1:10', song: [
+    [523,.2],[659,.2],[784,.2],[659,.4],[523,.2],[440,.4],
+    [587,.2],[698,.2],[784,.2],[698,.4],[587,.2],[523,.4],
+    [659,.2],[784,.2],[880,.2],[784,.4],[659,.2],[587,.4],
+    [784,.2],[880,.2],[988,.4],[880,.2],[784,.2],[659,.6],
+  ]},
+  { name:'MOOO MOOO',      artist:'COWY SOLO ARTIST',      dur:'1:18', song: [
+    [1047,.15],[988,.15],[880,.15],[784,.3],[880,.15],[988,.15],[1047,.3],
+    [880,.15],[784,.15],[698,.15],[659,.3],[698,.15],[784,.15],[880,.3],
+    [988,.15],[1047,.15],[1175,.15],[1319,.3],[1175,.15],[1047,.15],[988,.3],
+    [880,.15],[784,.15],[698,.15],[659,.3],[523,.6],
+  ]},
+  { name:'M00 AND MEOW',  artist:'COWY AND MOMO BAND',     dur:'1:32', song: [
+    [392,.3],[440,.3],[494,.3],[523,.6],[494,.3],[440,.6],
+    [349,.3],[392,.3],[440,.3],[494,.6],[440,.3],[392,.6],
+    [440,.3],[494,.3],[523,.3],[587,.6],[523,.3],[494,.6],
+    [440,.3],[392,.3],[349,.3],[330,.6],[294,.9],
+  ]},
+  { name:'MEOW???',   artist:'COWY FEAT JAWIR',      dur:'0:58', song: [
+    [659,.12],[784,.12],[880,.12],[988,.12],[1047,.24],[988,.12],[880,.12],
+    [784,.12],[659,.12],[587,.12],[523,.12],[494,.24],[523,.12],[587,.12],
+    [659,.12],[784,.12],[880,.12],[1047,.12],[1175,.24],[1047,.12],[880,.12],
+    [784,.12],[659,.12],[587,.12],[523,.24],[440,.36],
+  ]},
+];
+
+const JK = {
+  track:0, playing:false, loop:false,
+  ticker:null, noteIdx:0,
+};
+
+const jkOv    = $('jukebox-overlay');
+const jkEq    = $('jk-eq');
+const jkTitle = $('jk-title');
+const jkArtist= $('jk-artist');
+const jkTrackList=$('jk-tracks');
+const jkPlay  = $('jk-play');
+const jkPrev  = $('jk-prev');
+const jkNext  = $('jk-next');
+const jkLoop  = $('jk-loop');
+const jkVol   = $('jk-vol');
+const jkVolVal= $('jk-vol-val');
+const jkSlidFill=$('jk-slid-fill');
+
+function buildTrackList(){
+  jkTrackList.innerHTML='';
+  TRACKS.forEach((t,i)=>{
+    const d=document.createElement('div');
+    d.className='jk-track'+(i===JK.track?' active':'');
+    d.innerHTML=`<span class="jk-num">${String(i+1).padStart(2,'0')}</span><span class="jk-nm">${t.name}</span><span class="jk-dur">${t.dur}</span>`;
+    d.addEventListener('click',()=>{ playTrack(i); });
+    jkTrackList.appendChild(d);
+  });
+}
+
+function updateTrackUI(){
+  const t=TRACKS[JK.track];
+  jkTitle.textContent=t.name;
+  jkArtist.textContent=t.artist;
+  document.querySelectorAll('.jk-track').forEach((d,i)=>{
+    d.classList.toggle('active',i===JK.track);
+  });
+}
+
+function stopJkSong(){
+  clearTimeout(JK.ticker);
+  JK.ticker=null;
+}
+
+function scheduleJkNote(){
+  if(!JK.playing) return;
+  const song=TRACKS[JK.track].song;
+  const[f,d]=song[JK.noteIdx++%song.length];
+  try{
+    const c=actx(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);
+    o.type='square';o.frequency.value=f;
+    const vol=parseInt(jkVol.value)/100;
+    g.gain.setValueAtTime(.06*vol,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d*.82);
+    o.start();o.stop(c.currentTime+d);
+    if(JK.noteIdx>=song.length){
+      JK.noteIdx=0;
+      if(JK.loop){
+        JK.ticker=setTimeout(scheduleJkNote,d*1000+8);
+      } else {
+        JK.ticker=setTimeout(()=>{
+          JK.track=(JK.track+1)%TRACKS.length;
+          JK.noteIdx=0;
+          updateTrackUI();
+          scheduleJkNote();
+        },d*1000+50);
+      }
+      return;
+    }
+    JK.ticker=setTimeout(scheduleJkNote,d*1000+8);
+  }catch(e){}
+}
+
+function playTrack(idx){
+  stopJkSong();
+  stopBGM();
+  JK.track=idx; JK.noteIdx=0; JK.playing=true;
+  updateTrackUI();
+  jkPlay.textContent='▐▐';
+  jkEq.classList.remove('paused');
+  try{actx().resume();}catch(e){}
+  scheduleJkNote();
+}
+
+function togglePlay(){
+  if(JK.playing){
+    JK.playing=false;
+    stopJkSong();
+    jkPlay.textContent='►';
+    jkEq.classList.add('paused');
+  } else {
+    JK.playing=true;
+    jkPlay.textContent='▐▐';
+    jkEq.classList.remove('paused');
+    scheduleJkNote();
+  }
+}
+
+function openJukebox(){
+  jkOv.classList.remove('hidden');
+  sfx('open');
+  buildTrackList();
+  updateTrackUI();
+  if(!JK.playing) playTrack(JK.track);
+}
+function closeJukebox(){
+  jkOv.classList.add('hidden');
+  sfx('close');
+  stopJkSong();
+  JK.playing=false;
+  jkPlay.textContent='►';
+  jkEq.classList.add('paused');
+  if(S.bgmOn) startBGM();
+}
+
+$('close-jukebox').addEventListener('click',closeJukebox);
+jkOv.addEventListener('click',e=>{ if(e.target===jkOv) closeJukebox(); });
+$('open-jukebox').addEventListener('click',openJukebox);
+
+jkPlay.addEventListener('click',togglePlay);
+jkPrev.addEventListener('click',()=>{
+  sfx('nav');
+  playTrack((JK.track-1+TRACKS.length)%TRACKS.length);
+});
+jkNext.addEventListener('click',()=>{
+  sfx('nav');
+  playTrack((JK.track+1)%TRACKS.length);
+});
+jkLoop.addEventListener('click',()=>{
+  JK.loop=!JK.loop;
+  jkLoop.classList.toggle('active',JK.loop);
+  sfx('tog');
+});
+jkVol.addEventListener('input',()=>{
+  const v=parseInt(jkVol.value);
+  jkSlidFill.style.width=v+'%';
+  jkVolVal.textContent=v;
+});
+
+/* ─── SETTINGS ─── */
+function openCfg() {el.cfgOv.classList.remove('hidden');sfx('open');}
+function closeCfg(){el.cfgOv.classList.add('hidden');   sfx('close');}
+el.cfgBtn.addEventListener('click',openCfg);
+el.openCfg.addEventListener('click',openCfg);
+el.closeCfg.addEventListener('click',closeCfg);
+el.applyCfg.addEventListener('click',closeCfg);
+el.cfgOv.addEventListener('click',e=>{if(e.target===el.cfgOv)closeCfg();});
+
+/* ─── CREDITS ─── */
+const CRED = [
+  {t:'',                      cls:'gap'},
+  {t:'✦ GAME DESIGN ✦',       cls:'cm'},
+  {t:'PACARNYA AUREL',     cls:'cw'},
+  {t:'',                      cls:'gap'},
+  {t:'✦ PROGRAMMING ✦',       cls:'cm'},
+  {t:'RAIHAN PACARNYA AUREL JUGA',        cls:'cw'},
+  {t:'',                      cls:'gap'},
+  {t:'♥ MUSIC & SFX ♥',       cls:'cl'},
+  {t:'COWY, MOMO BAND, THE JAWIR',     cls:'cw'},
+  {t:'',                      cls:'gap'},
+  {t:'♥ CHARACTER ART ♥',     cls:'cl'},
+  {t:'KARAKTERNYA AUREL',      cls:'cw'},
+  {t:'',                      cls:'gap'},
+  {t:'✦ SPECIAL THANKS ✦',    cls:'cm'},
+  {t:'AUREL YANG UDAH CANTIK BANGET',      cls:'cw'},
+  {t:'REI YANG GANTENG BANGET JUGA',    cls:'cw'},
+  {t:'',                      cls:'gap'},
+  {t:'♥ THANK YOU ♥',         cls:'ch'},
+  {t:'MAKASIH UDAH NGEBUKA.',          cls:'ch'},
+  {t:'',                      cls:'gap'},
+  {t:'© 2026 RAIHAN PACARNYA AUREL .',cls:'cd'},
+  {t:'',                      cls:'gap'},
+];
+
+let credTimer=null;
+
+function buildCredits(){
+  el.credBody.innerHTML='';
+  CRED.forEach(({t,cls})=>{
+    const s=document.createElement('span');
+    s.className='cred-line '+cls;
+    s.textContent=t||'\u00a0';
+    el.credBody.appendChild(s);
+  });
+}
+
+function revealCredits(){
+  const lines=el.credBody.querySelectorAll('.cred-line');
+  lines.forEach(l=>{ if(!l.classList.contains('gap')) l.classList.remove('show'); });
+  clearTimeout(credTimer);
+  let i=0;
+  function next(){
+    if(i>=lines.length) return;
+    const l=lines[i++];
+    if(l.classList.contains('gap')){
+      next();
+    } else {
+      l.classList.add('show');
+      credTimer=setTimeout(next, 200);
+    }
+  }
+  setTimeout(next, 150);
+}
+
+function openCred(){
+  el.credOv.classList.remove('hidden');
+  sfx('open');
+  buildCredits();
+  revealCredits();
+}
+function closeCred(){
+  el.credOv.classList.add('hidden');
+  clearTimeout(credTimer);
+  sfx('close');
+}
+el.openCred.addEventListener('click',openCred);
+el.closeCred.addEventListener('click',closeCred);
+el.credOv.addEventListener('click',e=>{if(e.target===el.credOv)closeCred();});
+
+/* ─── TOGGLES ─── */
+function makeTog(btn,key,onFn,offFn){
+  btn.addEventListener('click',()=>{
+    sfx('tog');S[key]=!S[key];
+    btn.textContent=S[key]?'ON':'OFF';
+    btn.classList.toggle('on',S[key]);
+    S[key]?onFn&&onFn():offFn&&offFn();
+    if (key === 'bgmOn' || key === 'sfxOn' || key === 'vol') {
+      saveThemeToStorage();
+    }
+  });
+}
+makeTog(el.bgmTog,'bgmOn',startBGM,stopBGM);
+makeTog(el.sfxTog,'sfxOn');
+makeTog(el.scanTog,'scan',
+  ()=>document.body.classList.remove('no-scan'),
+  ()=>document.body.classList.add('no-scan')
+);
+makeTog(el.hrtTog,'hearts',startHearts,stopHearts);
+makeTog(el.starTog,'stars',buildStars,()=>el.sf.innerHTML='');
+makeTog(el.spkTog,'sparkle',
+  ()=>el.tChars.forEach(c=>c.style.animation=''),
+  ()=>el.tChars.forEach(c=>c.style.animation='none')
+);
+makeTog(el.flkTog,'flicker',
+  ()=>el.t1.style.animation='',
+  ()=>el.t1.style.animation='none'
+);
+makeTog(el.parTog,'parallax',null,()=>{
+  el.bgLayer.style.backgroundPosition='center center';
+});
+
+/* ─── VOLUME ─── */
+el.volSlid.addEventListener('input',()=>{
+  const v=parseInt(el.volSlid.value);
+  S.vol=v/100;el.volVal.textContent=v;el.slidFill.style.width=v+'%';
+  saveThemeToStorage();
+});
+
+/* ─── SWATCHES ─── */
+el.swatches.forEach(sw=>{
+  sw.addEventListener('click',()=>{
+    sfx('tog');
+    el.swatches.forEach(x=>x.classList.remove('on'));
+    sw.classList.add('on');
+    S.bgColor=sw.dataset.c;
+    S.bgCustomColor=true;
+    applyBg();
+    saveThemeToStorage();
+  });
+});
+
+/* ─── BG IMAGE ─── */
+el.bgUpload.addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{S.bgImage=ev.target.result;applyBg();saveThemeToStorage();};
+  r.readAsDataURL(f);
+});
+el.clearBg.addEventListener('click',()=>{
+  S.bgImage=null;applyBg();el.bgUpload.value='';sfx('tog');
+  saveThemeToStorage();
+});
+
+/* ─── PARALLAX ─── */
+document.addEventListener('mousemove',e=>{
+  if(!S.parallax||!S.bgImage) return;
+  const px=(e.clientX/window.innerWidth-.5)*18;
+  const py=(e.clientY/window.innerHeight-.5)*18;
+  el.bgLayer.style.backgroundPosition=`calc(50% + ${px}px) calc(50% + ${py}px)`;
+});
+
+/* ─── INIT ─── */
+(function init(){
+  applyBg();
+  buildStars();
+  startHearts();
+  updateSel();
+  
+  // Load saved theme
+  loadThemeFromStorage();
+  
+  // Start initial loading screen
+  initInitialLoading();
+})();
+</script>
+</body>
+</html>  
